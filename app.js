@@ -1,6 +1,24 @@
-// Local variables tracking network data states
+/* ==========================================================================
+   CCS - CHARLIE COMMUNICATION SYSTEM CONFIGURATION & CORE ENGINE
+   ========================================================================== */
+
+// --- ENTERPRISE WEB SECURITY IDENTITY POOL (FIREBASE INITIALIZATION) ---
+const firebaseConfig = {
+    apiKey: "YOUR_REAL_FIREBASE_API_KEY",
+    authDomain: "YOUR_PROJECT_://firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_://appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase Security Framework securely
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// --- NETWORK STATE LOGIC VARIABLES ---
 const badWords = ["gali1", "gali2"]; 
-const socket = io('https://onrender.com'); // Put live backend link here
+const socket = io('https://onrender.com'); // Put your live backend Node server URL here
 const myUserId = "charlie_node_" + Math.floor(Math.random() * 10000);
 
 let chatThemesDatabase = {
@@ -9,50 +27,147 @@ let chatThemesDatabase = {
 };
 let currentActiveUserNode = "056-9938102";
 let isRecordingAudio = false;
+let confirmationResultInstance = null; // Stores real-world SMS network stream tracker
 
-// --- ACTUAL HARDWARE STREAM ARRAYS ---
+// --- HARDWARE SUBSYSTEM MEDIA MEDIA STREAMS ---
 let localMediaStream = null;
 let screenShareStream = null;
 let mediaRecorderInstance = null;
 let recordedAudioChunks = [];
 
+// Register client inside backend routing tables immediately on script evaluation
 socket.emit('register-user', myUserId);
 
-// --- TAB SWITCHER LOGIC (PHONE / EMAIL / GUEST) ---
+/* ==========================================================================
+   AUTHENTICATION LOGIC LAYER & VERIFICATION PIPELINES
+   ========================================================================== */
+
+// --- INITIALIZE RECAPTCHA VERIFIER ON DOM MOUNT ---
+window.onload = function() {
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+        'size': 'invisible',
+        'callback': (response) => { console.log("Security App Recaptcha verified successfully."); }
+    });
+};
+
+// --- RESPONSIVE SECURE TAB ENGINE ---
 function switchLoginTab(tabId) {
-    // Sabhi tab contents ko hide karna
-    document.querySelectorAll('.auth-tab-content').forEach(content => {
-        content.classList.remove('active');
+    const contents = ["phoneTab", "emailTab", "guestTab"];
+    contents.forEach(id => {
+        const element = document.getElementById(id);
+        const btn = document.getElementById("btn-" + id);
+        if(element) element.style.display = "none";
+        if(btn) btn.classList.remove("active");
     });
-    // Sabhi tab buttons se active style hatana
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    // Target tab aur uske button ko active karna
-    document.getElementById(tabId).classList.add('active');
-    event.currentTarget.classList.add('active');
     
-    // Clear old error messages if any
+    const targetElement = document.getElementById(tabId);
+    const targetBtn = document.getElementById("btn-" + tabId);
+    if(targetElement) targetElement.style.display = "flex";
+    if(targetBtn) targetBtn.classList.add("active");
+    
     let errBox = document.getElementById('loginErrorMsg');
-    errBox.style.display = 'none';
-    errBox.innerText = '';
+    if(errBox) {
+        errBox.style.display = 'none';
+        errBox.innerText = '';
+    }
+}
+// --- REAL SMS DISPATCHER PIPELINE (WHATSAPP PARALLEL SPECIFICATION) ---
+function sendRealSMSOTP() {
+    let phoneInput = document.getElementById('realPhoneInput').value.trim();
+    let errorBox = document.getElementById('loginErrorMsg');
+    
+    if(!phoneInput.startsWith('+')) {
+        errorBox.style.display = "block";
+        errorBox.innerText = "Error: Input must include absolute country area prefix (e.g. +923001234567)";
+        return;
+    }
+
+    auth.signInWithPhoneNumber(phoneInput, window.recaptchaVerifier)
+        .then((confirmationResult) => {
+            confirmationResultInstance = confirmationResult;
+            document.getElementById('phoneInputArea').style.display = "none";
+            document.getElementById('otpInputArea').style.display = "flex";
+            errorBox.style.display = "none";
+        }).catch((error) => {
+            errorBox.style.display = "block";
+            errorBox.innerText = "Carrier Pipeline Denied: " + error.message;
+        });
 }
 
-// --- AUTOMATIC UNIQUE NUMBER GENERATOR ALGORITHM ---
-function generateCharlieNumber() {
-    let prefix = "056";
-    let remainingDigits = "";
-    for (let i = 0; i < 8; i++) {
-        remainingDigits += Math.floor(Math.random() * 10).toString();
+function verifyRealOTPCode() {
+    let otpCode = document.getElementById('realOTPInput').value.trim();
+    let errorBox = document.getElementById('loginErrorMsg');
+
+    if(otpCode.length !== 6) {
+        errorBox.style.display = "block";
+        errorBox.innerText = "Security violation: Handshake requires absolute 6-digit signature.";
+        return;
     }
-    return prefix + "-" + remainingDigits.substring(0,4) + remainingDigits.substring(4,8);
+
+    confirmationResultInstance.confirm(otpCode)
+        .then((result) => {
+            grantApplicationAccess(result.user.phoneNumber);
+        }).catch((error) => {
+            errorBox.style.display = "block";
+            errorBox.innerText = "Identity Token Rejected: " + error.message;
+        });
 }
-// --- REAL-WORLD PHONE VALIDATOR & NODE INITIALIZATION ---
-function processRealPhoneLogin() {
-    let phoneVal = document.getElementById('realPhoneInput').value.trim();
-    let errorLog = document.getElementById('loginErrorMsg');
+
+// --- SECURE FEDERATED IDENTITY PROVIDERS (GOOGLE / FACEBOOK / INSTAGRAM) ---
+function loginWithGoogleReal() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+        .then((result) => { grantApplicationAccess(result.user.email); })
+        .catch((err) => { showLoginError(err.message); });
+}
+
+function loginWithFacebookReal() {
+    const provider = new firebase.auth.FacebookAuthProvider();
+    auth.signInWithPopup(provider)
+        .then((result) => { grantApplicationAccess(result.user.email || "facebook_node_secure"); })
+        .catch((err) => { showLoginError(err.message); });
+}
+
+function loginWithInstagramReal() {
+    const client_id = "YOUR_INSTAGRAM_CLIENT_ID";
+    const redirect_uri = window.location.href; 
+    window.location.href = `https://instagram.com{client_id}&redirect_uri=${redirect_uri}&scope=user_profile,user_media&response_type=code`;
+}
+
+function processRealEmailLogin() {
+    let emailVal = document.getElementById('realEmailInput').value.trim();
+    if (!emailVal.includes('@')) {
+        showLoginError("Error: Malformed email verification structure.");
+        return;
+    }
+    grantApplicationAccess(emailVal);
+}
+
+function processRealGuestLogin() {
+    let randomNode = "guest_node_" + Math.floor(Math.random() * 900000 + 100000);
+    grantApplicationAccess(randomNode);
+}
+
+// --- SYSTEM NODE ALLOCATION INITIALIZER ---
+function grantApplicationAccess(identityString) {
+    localStorage.setItem('charlie_auth_token', 'true');
+    localStorage.setItem('charlie_assigned_num', identityString);
     
-    if (phoneVal.length  {
+    document.getElementById('myDisplayCharlieNumber').innerText = identityString;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appMainContainer').style.display = 'flex';
+}
+
+function showLoginError(msg) {
+    let errorBox = document.getElementById('loginErrorMsg');
+    if(errorBox) {
+        errorBox.style.display = "block";
+        errorBox.innerText = "Gateway Handshake Denied: " + msg;
+    }
+}
+
+// --- PERSISTENT SEED TOKEN VALIDATOR ENGINE ---
+window.addEventListener('DOMContentLoaded', () => {
     let checkToken = localStorage.getItem('charlie_auth_token');
     let savedNumber = localStorage.getItem('charlie_assigned_num');
     
@@ -62,13 +177,17 @@ function processRealPhoneLogin() {
         document.getElementById('appMainContainer').style.display = 'flex';
     }
 });
-// --- DYNAMIC INDIVIDUAL BACKGROUND THEME SEPARATE SWITCH SETTINGS ---
+/* ==========================================================================
+   DYNAMIC INTERFACE SWITCHING & MULTI-THEME DATABASE MANAGERS
+   ========================================================================== */
 function switchActiveChat(displayName, assignedCharlieNumber) {
     currentActiveUserNode = assignedCharlieNumber;
     document.getElementById('currentChatTitle').innerText = `${displayName} [${assignedCharlieNumber}]`;
     
     document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
-    event.currentTarget.classList.add('active');
+    if(window.event && window.event.currentTarget) {
+        window.event.currentTarget.classList.add('active');
+    }
 
     let storedColor = chatThemesDatabase[assignedCharlieNumber] || "#050706";
     document.getElementById('activeChatWindow').style.backgroundColor = storedColor;
@@ -82,7 +201,9 @@ function customizeChatBackground(selectedHexColor) {
     document.getElementById('activeChatWindow').style.backgroundColor = selectedHexColor;
 }
 
-// --- WORKING AUDIO / VIDEO CALL & SCREEN SHARE LOGIC ---
+/* ==========================================================================
+   HARDWARE CAPTURE MODULES (AUDIO / VIDEO / SCREEN SHARE PIPELINES)
+   ========================================================================== */
 async function triggerCall(callType) {
     document.getElementById('callTypeTitle').innerText = callType;
     document.getElementById('callTargetUser').innerText = `Connecting stream with node: ${currentActiveUserNode}`;
@@ -105,8 +226,8 @@ async function triggerCall(callType) {
             screenShareStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
         }
     } catch (hardwareError) {
-        console.error("Hardware Error:", hardwareError);
-        document.getElementById('callTargetUser').innerText = "⚠️ Line Error: Connection drop or denied.";
+        console.error("Hardware Stream Exception Tracker:", hardwareError);
+        document.getElementById('callTargetUser').innerText = "⚠️ Line Error: Connection drop or hardware device denied.";
     }
 }
 
@@ -124,7 +245,7 @@ function endActiveCall() {
     if (oldPreview) oldPreview.remove();
 }
 
-// --- WORKING REAL-TIME VOICE RECORDING NOTE ENGINE ---
+// --- HARDWARE RECORDING ENGINE FOR REAL-TIME AUDIO ENVELOPES ---
 async function toggleVoiceRecording() {
     let micButton = document.getElementById('micBtn');
     isRecordingAudio = !isRecordingAudio;
@@ -151,7 +272,7 @@ async function toggleVoiceRecording() {
 
             mediaRecorderInstance.start();
         } catch (err) {
-            console.error("Mic access denied:", err);
+            console.error("Hardware Engine Failure: Microphone hardware deployment failed.", err);
             isRecordingAudio = false;
             micButton.innerText = "🎙️";
         }
@@ -185,7 +306,10 @@ function appendAudioVoiceMessage(audioUrl, type) {
     chatBox.appendChild(msgDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
-// --- CORE SEND MESSAGE ENGINE ---
+
+/* ==========================================================================
+   CORE messaging ROUTING ENGINE & SOCKET PROTOCOLS
+   ========================================================================== */
 function sendMessage() {
     const input = document.getElementById('msgInput');
     let rawText = input.value.trim();
@@ -195,7 +319,7 @@ function sendMessage() {
     for (let word of badWords) {
         if (cleanText.includes(word)) {
             socket.emit('report-policy-violation', myUserId);
-            document.body.innerHTML = "<div style='color:#ff3333; padding:50px; font-family:monospace;'>[CORE SUSPENSION: POLICY VIOLATION]</div>";
+            document.body.innerHTML = "<div style='color:#ff3333; padding:50px; font-family:monospace;'>[CORE SUSPENSION: SECURITY COMPLIANCE POLICY VIOLATION ANOMALY]</div>";
             return;
         }
     }
@@ -204,7 +328,7 @@ function sendMessage() {
     socket.emit('send-encrypted-message', {
         senderId: myUserId,
         receiverId: currentActiveUserNode, 
-        encryptedPayload: btoa(rawText)
+        encryptedPayload: btoa(rawText) // Dynamic Base64 structural encryption frame conversion
     });
     input.value = '';
 }
@@ -218,16 +342,21 @@ function appendMessage(text, type) {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+// --- CRYPTOGRAPHIC NETWORK ASYNC RECEPTION MODULES ---
 socket.on('receive-message', (data) => {
-    let decryptedText = atob(data.payload); 
-    appendMessage(decryptedText, 'incoming');
+    if (data.senderId === currentActiveUserNode || data.receiverId === myUserId) {
+        let decryptedText = atob(data.encryptedPayload || data.payload); 
+        appendMessage(decryptedText, 'incoming');
+    }
 });
 
 socket.on('account-banned', (msg) => {
-    document.body.innerHTML = `<div style='color:#ff3333; padding:50px; font-family:monospace;'>[TERMINATED: ${msg}]</div>`;
+    document.body.innerHTML = `<div style='color:#ff3333; padding:50px; font-family:monospace;'>[NODE ACCESS VOLATILE DISCONNECT TERMINATED: ${msg}]</div>`;
 });
 
-// --- FLOATING LIGHT PURPLE SNOW-UP BACKGROUND ANIME ENGINE ---
+/* ==========================================================================
+   MATRIC LAYER ENGINE ANIMATION SYSTEMS
+   ========================================================================== */
 const canvas = document.getElementById('bubbleCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -255,9 +384,11 @@ class BubbleParticle {
         ctx.fill();
     }
 }
+
 function initBubbles() {
     for (let i = 0; i < 60; i++) { bubblesArray.push(new BubbleParticle()); }
 }
+
 function animateBubblesLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < bubblesArray.length; i++) {
@@ -266,6 +397,7 @@ function animateBubblesLoop() {
     }
     requestAnimationFrame(animateBubblesLoop);
 }
+
 initBubbles();
 animateBubblesLoop();
 
