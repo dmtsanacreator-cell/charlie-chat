@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charlie Chat Premium</title>
+    <title>CCS - Charlie Communication System</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://socket.io"></script>
 </head>
@@ -12,17 +12,45 @@
     <!-- Background Canvas for Purple Snow-Up Effect -->
     <canvas id="bubbleCanvas"></canvas>
 
-    <!-- 1. DYNAMIC NEON LOGIN GATEWAY SCREEN -->
+    <!-- 1. REAL-WORLD ADVANCED AUTHENTICATION GATEWAY -->
     <div id="loginScreen" class="login-overlay">
         <div class="login-card">
-            <h2>CCS GATEWAY INITIALIZATION</h2>
-            <p>Connect secure session via your social token:</p>
+            <h2>CCS CORE LOGIN INITIALIZATION</h2>
+            <p>Select an active pipeline channel to generate your secure anonymous node identity:</p>
             
-            <div class="social-login-group">
-                <button class="login-btn insta" onclick="handleSocialLogin('Instagram')">LOG IN WITH INSTAGRAM</button>
-                <button class="login-btn fb" onclick="handleSocialLogin('Facebook')">LOG IN WITH FACEBOOK</button>
+            <!-- Real Working Tab Navigation Buttons -->
+            <div class="login-tabs">
+                <button class="tab-btn active" onclick="switchLoginTab('phoneTab')">PHONE NUMBER</button>
+                <button class="tab-btn" onclick="switchLoginTab('emailTab')">GOOGLE / EMAIL</button>
+                <button class="tab-btn" onclick="switchLoginTab('guestTab')">GUEST ACCESS</button>
             </div>
-            <div class="security-note">> Anonymous 056-ID allocation will bypass Sim card metadata tracking automatically.</div>
+
+            <!-- TAB 1: Real Phone Input Panel -->
+            <div id="phoneTab" class="auth-tab-content active">
+                <div class="input-group">
+                    <label>Enter Phone Number:</label>
+                    <input type="tel" id="realPhoneInput" placeholder="+92 300 1234567" autocomplete="off">
+                </div>
+                <button class="action-submit-btn" onclick="processRealPhoneLogin()">INITIALIZE NODE SECURE</button>
+            </div>
+
+            <!-- TAB 2: Real Google/Email Input Panel -->
+            <div id="emailTab" class="auth-tab-content">
+                <div class="input-group">
+                    <label>Enter Google Email Address:</label>
+                    <input type="email" id="realEmailInput" placeholder="username@gmail.com" autocomplete="off">
+                </div>
+                <button class="action-submit-btn" onclick="processRealEmailLogin()">CONNECT SECURE SYSTEM</button>
+            </div>
+
+            <!-- TAB 3: Real Working Guest Gateway -->
+            <div id="guestTab" class="auth-tab-content">
+                <div class="guest-notice">> Guest Access generates a temporary encrypted volatile session. No metadata trace will be cached on local browser storage strings.</div>
+                <button class="action-submit-btn guest" onclick="processRealGuestLogin()">LAUNCH ANONYMOUS GUEST NODE</button>
+            </div>
+
+            <div id="loginErrorMsg" class="error-log-label" style="display: none;"></div>
+            <div class="security-note">> Anonymous 056-ID token allocation will automatically bypass cellular ISP tracking databases.</div>
         </div>
     </div>
 
@@ -36,14 +64,14 @@
         </div>
     </div>
 
-    <!-- 2. MAIN APP INTERFACE CONTAINER (Hidden by default until logged in) -->
+    <!-- 2. MAIN APP INTERFACE CONTAINER (Hidden by default until validated) -->
     <div class="app-fullscreen" id="appMainContainer" style="display: none;">
         
         <!-- SIDEBAR: Numbers & Social Profiles -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <div class="app-title">Charlie Chat</div>
-                <div class="my-id-label">YOUR PROFILE ID:</div>
+                <div class="my-id-label">YOUR ASSIGNED PROFILE ID:</div>
                 <div class="my-id-val" id="myDisplayCharlieNumber">056-0000000</div>
             </div>
             
