@@ -6,105 +6,120 @@
     <title>CCS - Charlie Communication System</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- Firebase App aur Auth SDKs -->
+    <!-- ==========================================================================
+         OFFICIAL CORE SDK DEPENDENCIES (COMPAT SPECS)
+         ========================================================================== -->
     <script src="https://gstatic.com"></script>
     <script src="https://gstatic.com"></script>
-    <!-- Socket.io System -->
+    <script src="https://gstatic.com"></script>
     <script src="https://socket.io"></script>
 </head>
 <body>
 
-    <!-- Background Canvas for Purple Snow-Up Effect -->
+    <!-- Background Layer Particle Canvas -->
     <canvas id="bubbleCanvas"></canvas>
 
-    <!-- REAL-WORLD FUNCTIONAL AUTHENTICATION GATEWAY -->
+    <!-- REAL-WORLD FUNCTIONAL AUTHENTICATION GATEWAY LAYER -->
     <div id="loginScreen" class="login-overlay">
         <div class="login-card">
             <h2>CCS CORE AUTH INTERFACE</h2>
-            <p>Connect using real-world enterprise verification providers:</p>
+            <p>Select a transmission provider to connect identity strings:</p>
             
+            <!-- FIXED: Balanced Navigation Routing Buttons Header Grid -->
             <div class="login-tabs">
                 <button id="btn-phoneTab" class="tab-btn active" onclick="switchLoginTab('phoneTab')">PHONE OTP</button>
-                <button id="btn-socialTab" class="tab-btn" onclick="switchLoginTab('socialTab')">SOCIAL OAUTH</button>
-                <button id="btn-guestTab" class="tab-btn" onclick="switchLoginTab('guestTab')">GUEST</button>
+                <button id="btn-emailTab" class="tab-btn" onclick="switchLoginTab('emailTab')">EMAIL MANUAL</button>
+                <button id="btn-socialTab" class="tab-btn" onclick="switchLoginTab('socialTab')">SOCIAL NETWORK</button>
+                <button id="btn-guestTab" class="tab-btn" onclick="switchLoginTab('guestTab')">ANONYMOUS GUEST</button>
             </div>
 
-            <!-- TAB 1: Real Phone Input + Recaptcha Container -->
+            <!-- TAB 1: Cellular Verification Engine View -->
             <div id="phoneTab" class="auth-tab-content active">
                 <div class="input-group" id="phoneInputArea">
-                    <label>Enter Phone Number (With Country Code):</label>
+                    <label>Enter Cellular Mobile Number:</label>
                     <input type="tel" id="realPhoneInput" placeholder="+923001234567" autocomplete="off">
-                    <div id="recaptcha-container" style="margin-top: 10px;"></div>
-                    <button class="action-submit-btn" style="margin-top: 10px;" onclick="sendRealSMSOTP()">SEND VERIFICATION CODE</button>
+                    <div id="recaptcha-container" style="margin-top: 10px; text-align: center;"></div>
+                    <button class="action-submit-btn" style="margin-top: 15px;" onclick="sendRealSMSOTP()">DISPATCH SECURE PIN</button>
                 </div>
                 
-                <!-- OTP Code Field -->
                 <div class="input-group" id="otpInputArea" style="display: none;">
-                    <label>Enter 6-Digit OTP Code:</label>
+                    <label>Enter 6-Digit OTP Matrix Code:</label>
                     <input type="text" id="realOTPInput" placeholder="123456" autocomplete="off">
-                    <button class="action-submit-btn verification" onclick="verifyRealOTPCode()">VERIFY & INITIALIZE NODE</button>
+                    <button class="action-submit-btn" style="margin-top: 15px;" onclick="verifyRealOTPCode()">VERIFY IDENTITY</button>
                 </div>
             </div>
 
-            <!-- TAB 2: Real Federated Social Sign-In Buttons -->
-            <div id="socialTab" class="auth-tab-content">
+            <!-- TAB 2: FIXED - Manual Email Authorization String Input Box View -->
+            <div id="emailTab" class="auth-tab-content" style="display: none;">
+                <div class="input-group">
+                    <label>Or Sign In with Manual Email String:</label>
+                    <input type="email" id="realEmailInput" placeholder="username@gmail.com" autocomplete="off">
+                </div>
+                <button class="action-submit-btn" onclick="processRealEmailLogin()">CONNECT VIA EMAIL</button>
+            </div>
+
+            <!-- TAB 3: Federated OAuth Authentication Providers View -->
+            <div id="socialTab" class="auth-tab-content" style="display: none;">
                 <div class="social-btn-stack">
-                    <button class="social-provider-btn google" onclick="loginWithGoogleReal()">Continue with Google Official</button>
-                    <button class="social-provider-btn facebook" onclick="loginWithFacebookReal()">Continue with Facebook Secure</button>
-                    <button class="social-provider-btn instagram" onclick="loginWithInstagramReal()">Connect Instagram Profile</button>
+                    <button class="social-provider-btn google" onclick="loginWithGoogleReal()">
+                        Continue with Google Official
+                    </button>
+                    <button class="social-provider-btn facebook" onclick="loginWithFacebookReal()">
+                        Continue with Facebook Secure
+                    </button>
+                    <button class="social-provider-btn instagram" onclick="loginWithInstagramReal()">
+                        Connect Instagram Profile
+                    </button>
                 </div>
             </div>
 
-            <!-- TAB 3: Guest Gateway -->
-            <div id="guestTab" class="auth-tab-content">
-                <div class="guest-notice">> Volatile node generation bypasses database tracking. Temporary token only.</div>
-                <button class="action-submit-btn guest" onclick="processRealGuestLogin()">LAUNCH ANONYMOUS GUEST NODE</button>
+            <!-- TAB 4: Anonymous Temporary Session Tokens Allocation View -->
+            <div id="guestTab" class="auth-tab-content" style="display: none;">
+                <div class="guest-notice">> Temporary volatile allocation session. No static profile cache tracking will remain.</div>
+                <button class="action-submit-btn guest" onclick="processRealGuestLogin()">LAUNCH GUEST NODE</button>
             </div>
 
             <div id="loginErrorMsg" class="error-log-label" style="display: none;"></div>
         </div>
     </div>
 
-    <!-- Calling Pop-up Interface Layer -->
-    <div id="callOverlay" class="call-popup-overlay">
+    <!-- Calling Pop-up Interface Layer Window Grid Overlay -->
+    <div id="callOverlay" class="call-popup-overlay" style="display: none;">
         <div class="call-card">
-            <h2 id="callTypeTitle">AUDIO CALL</h2>
-            <p id="callTargetUser">Connecting stream...</p>
+            <h2 id="callTypeTitle">AUDIO STREAM CALL</h2>
+            <p id="callTargetUser">Connecting interface pipeline parameters...</p>
             <div class="call-animation">● ● ●</div>
-            <button class="end-call-btn" onclick="endActiveCall()">END CALL</button>
+            <button class="end-call-btn" onclick="endActiveCall()">DISCONNECT LINE</button>
         </div>
     </div>
 
     <!-- MAIN APP INTERFACE CONTAINER -->
     <div class="app-fullscreen" id="appMainContainer" style="display: none;">
         
-        <!-- SIDEBAR: Numbers & Social Profiles -->
+        <!-- SIDEBAR VIEW GRIDS -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <div class="app-title">Charlie Core</div>
-                <div class="my-id-label">AUTHENTICATED IDENTITY:</div>
-                <div class="my-id-val" id="myDisplayCharlieNumber">Connecting...</div>
+                <div class="my-id-label">YOUR REGISTERED NODE ID:</div>
+                <div class="my-id-val" id="myDisplayCharlieNumber">Resolving identity tracking...</div>
             </div>
 
-            <!-- WHATSAPP-STYLE NEW CONTACT ADDER BOX -->
-            <div class="add-contact-box">
-                <input type="text" id="newContactIdInput" placeholder="Enter Friend's ID..." autocomplete="off">
-                <button onclick="addNewContactToList()">+ ADD</button>
+            <!-- WHATSAPP CONTACT ENTRY BUILDER ACTION SYSTEM BOX -->
+            <div class="add-contact-box" style="padding: 15px 24px; border-bottom: 1px solid var(--border-secure-line); display: flex; gap: 10px;">
+                <input type="text" id="newContactIdInput" placeholder="Search registered ID..." style="flex: 1; background: rgba(0,0,0,0.5); border: 1px solid var(--border-secure-line); padding: 8px 12px; color: var(--neon-cyber-cyan); font-size: 0.8rem; border-radius: 4px; outline: none;">
+                <button onclick="addNewContactToList()" style="background: var(--neon-purple-glow); border: none; color: white; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: bold;">+ ADD</button>
             </div>
             
-            <div class="chat-list" id="chatListRegistry">
-                <div class="chat-item active" onclick="switchActiveChat('User_Alpha', '056-9938102')">
-                    <span class="user-name">User [056-9938102]</span>
-                    <span class="last-msg">🔑 Operational pipeline ready.</span>
-                </div>
+            <div class="chat-list">
+                <!-- Dynamic contact listings will be rendered here securely -->
             </div>
         </div>
 
-        <!-- MAIN DASHBOARD: Full Screen Chat Box Window -->
+        <!-- ACTIVE INTERACTION GRAPH WINDOW VIEWPORT -->
         <div class="main-chat-window" id="activeChatWindow">
             <div class="chat-window-header">
                 <div class="header-info-left">
-                    <span class="active-user" id="currentChatTitle">Select Node Stream</span>
+                    <span class="active-user" id="currentChatTitle">Select Connection Pipeline</span>
                     <span class="status-badge">● End-to-End Cryptography Active</span>
                 </div>
                 <div class="header-tools-right">
@@ -116,12 +131,14 @@
             </div>
 
             <div class="messages-container" id="chatBox">
-                <div class="message-bubble incoming">Select a connection pipeline to view records.</div>
+                <div class="message-bubble incoming">
+                    Select a connection row profile mapping from sidebar matrix to read logs.
+                </div>
             </div>
 
             <div class="input-bar-container">
                 <button class="tool-btn" title="Record Voice" id="micBtn" onclick="toggleVoiceRecording()">🎙️</button>
-                <input type="text" id="msgInput" placeholder="Type verified payload..." autocomplete="off">
+                <input type="text" id="msgInput" placeholder="Type data payload stream..." autocomplete="off">
                 <button class="send-action-btn" onclick="sendMessage()">EXEC SEND</button>
             </div>
         </div>
