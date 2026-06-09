@@ -1,4 +1,4 @@
-// Local variables tracking data state
+// Local variables tracking network data states
 const badWords = ["gali1", "gali2"]; 
 const socket = io('https://onrender.com'); // Put live backend link here
 const myUserId = "charlie_node_" + Math.floor(Math.random() * 10000);
@@ -18,7 +18,27 @@ let recordedAudioChunks = [];
 
 socket.emit('register-user', myUserId);
 
-// --- AUTO 056 NUMBER GENERATION ALGORITHM ---
+// --- TAB SWITCHER LOGIC (PHONE / EMAIL / GUEST) ---
+function switchLoginTab(tabId) {
+    // Sabhi tab contents ko hide karna
+    document.querySelectorAll('.auth-tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    // Sabhi tab buttons se active style hatana
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    // Target tab aur uske button ko active karna
+    document.getElementById(tabId).classList.add('active');
+    event.currentTarget.classList.add('active');
+    
+    // Clear old error messages if any
+    let errBox = document.getElementById('loginErrorMsg');
+    errBox.style.display = 'none';
+    errBox.innerText = '';
+}
+
+// --- AUTOMATIC UNIQUE NUMBER GENERATOR ALGORITHM ---
 function generateCharlieNumber() {
     let prefix = "056";
     let remainingDigits = "";
@@ -27,22 +47,12 @@ function generateCharlieNumber() {
     }
     return prefix + "-" + remainingDigits.substring(0,4) + remainingDigits.substring(4,8);
 }
-
-// --- SOCIAL TOKEN SIMULATION & GATEWAY SWITCH ---
-function handleSocialLogin(platformName) {
-    console.log(`Authenticating handshake with ${platformName} servers...`);
-    let allocatedId = generateCharlieNumber();
+// --- REAL-WORLD PHONE VALIDATOR & NODE INITIALIZATION ---
+function processRealPhoneLogin() {
+    let phoneVal = document.getElementById('realPhoneInput').value.trim();
+    let errorLog = document.getElementById('loginErrorMsg');
     
-    localStorage.setItem('charlie_auth_token', 'true');
-    localStorage.setItem('charlie_assigned_num', allocatedId);
-    
-    document.getElementById('myDisplayCharlieNumber').innerText = allocatedId;
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('appMainContainer').style.display = 'flex';
-}
-
-// --- STATE MANAGER LOCKER RUNNING ON REFRESH ---
-window.addEventListener('DOMContentLoaded', () => {
+    if (phoneVal.length  {
     let checkToken = localStorage.getItem('charlie_auth_token');
     let savedNumber = localStorage.getItem('charlie_assigned_num');
     
@@ -71,6 +81,7 @@ function customizeChatBackground(selectedHexColor) {
     chatThemesDatabase[currentActiveUserNode] = selectedHexColor;
     document.getElementById('activeChatWindow').style.backgroundColor = selectedHexColor;
 }
+
 // --- WORKING AUDIO / VIDEO CALL & SCREEN SHARE LOGIC ---
 async function triggerCall(callType) {
     document.getElementById('callTypeTitle').innerText = callType;
