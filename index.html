@@ -6,9 +6,7 @@
     <title>CCS - Charlie Communication System</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- ==========================================================================
-         OFFICIAL CORE SDK DEPENDENCIES (COMPAT SPECS)
-         ========================================================================== -->
+    <!-- SYSTEM CORE SDK LOADER: Sequence Fixed -->
     <script src="https://gstatic.com"></script>
     <script src="https://gstatic.com"></script>
     <script src="https://gstatic.com"></script>
@@ -19,13 +17,12 @@
     <!-- Background Layer Particle Canvas -->
     <canvas id="bubbleCanvas"></canvas>
 
-    <!-- REAL-WORLD FUNCTIONAL AUTHENTICATION GATEWAY LAYER -->
+    <!-- AUTHENTICATION GATEWAY LAYER -->
     <div id="loginScreen" class="login-overlay">
         <div class="login-card">
             <h2>CCS CORE AUTH INTERFACE</h2>
             <p>Select a transmission provider to connect identity strings:</p>
             
-            <!-- FIXED: Balanced Navigation Routing Buttons Header Grid -->
             <div class="login-tabs">
                 <button id="btn-phoneTab" class="tab-btn active" onclick="switchLoginTab('phoneTab')">PHONE OTP</button>
                 <button id="btn-emailTab" class="tab-btn" onclick="switchLoginTab('emailTab')">EMAIL MANUAL</button>
@@ -33,7 +30,7 @@
                 <button id="btn-guestTab" class="tab-btn" onclick="switchLoginTab('guestTab')">ANONYMOUS GUEST</button>
             </div>
 
-            <!-- TAB 1: Cellular Verification Engine View -->
+            <!-- TAB 1: Phone OTP -->
             <div id="phoneTab" class="auth-tab-content active">
                 <div class="input-group" id="phoneInputArea">
                     <label>Enter Cellular Mobile Number:</label>
@@ -49,7 +46,7 @@
                 </div>
             </div>
 
-            <!-- TAB 2: FIXED - Manual Email Authorization String Input Box View -->
+            <!-- TAB 2: Email Manual -->
             <div id="emailTab" class="auth-tab-content" style="display: none;">
                 <div class="input-group">
                     <label>Or Sign In with Manual Email String:</label>
@@ -58,7 +55,7 @@
                 <button class="action-submit-btn" onclick="processRealEmailLogin()">CONNECT VIA EMAIL</button>
             </div>
 
-            <!-- TAB 3: Federated OAuth Authentication Providers View -->
+            <!-- TAB 3: Social OAuth -->
             <div id="socialTab" class="auth-tab-content" style="display: none;">
                 <div class="social-btn-stack">
                     <button class="social-provider-btn google" onclick="loginWithGoogleReal()">
@@ -73,7 +70,7 @@
                 </div>
             </div>
 
-            <!-- TAB 4: Anonymous Temporary Session Tokens Allocation View -->
+            <!-- TAB 4: Anonymous Guest -->
             <div id="guestTab" class="auth-tab-content" style="display: none;">
                 <div class="guest-notice">> Temporary volatile allocation session. No static profile cache tracking will remain.</div>
                 <button class="action-submit-btn guest" onclick="processRealGuestLogin()">LAUNCH GUEST NODE</button>
@@ -83,7 +80,7 @@
         </div>
     </div>
 
-    <!-- Calling Pop-up Interface Layer Window Grid Overlay -->
+    <!-- Calling Pop-up Interface Layer -->
     <div id="callOverlay" class="call-popup-overlay" style="display: none;">
         <div class="call-card">
             <h2 id="callTypeTitle">AUDIO STREAM CALL</h2>
@@ -104,18 +101,16 @@
                 <div class="my-id-val" id="myDisplayCharlieNumber">Resolving identity tracking...</div>
             </div>
 
-            <!-- WHATSAPP CONTACT ENTRY BUILDER ACTION SYSTEM BOX -->
+            <!-- CONTACT ADDER -->
             <div class="add-contact-box" style="padding: 15px 24px; border-bottom: 1px solid var(--border-secure-line); display: flex; gap: 10px;">
                 <input type="text" id="newContactIdInput" placeholder="Search registered ID..." style="flex: 1; background: rgba(0,0,0,0.5); border: 1px solid var(--border-secure-line); padding: 8px 12px; color: var(--neon-cyber-cyan); font-size: 0.8rem; border-radius: 4px; outline: none;">
                 <button onclick="addNewContactToList()" style="background: var(--neon-purple-glow); border: none; color: white; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: bold;">+ ADD</button>
             </div>
             
-            <div class="chat-list">
-                <!-- Dynamic contact listings will be rendered here securely -->
-            </div>
+            <div class="chat-list"></div>
         </div>
 
-        <!-- ACTIVE INTERACTION GRAPH WINDOW VIEWPORT -->
+        <!-- ACTIVE CHAT VIEWPORT -->
         <div class="main-chat-window" id="activeChatWindow">
             <div class="chat-window-header">
                 <div class="header-info-left">
@@ -145,6 +140,7 @@
 
     </div>
 
+    <!-- Script Application Execution Handle -->
     <script src="app.js"></script>
 </body>
 </html>
