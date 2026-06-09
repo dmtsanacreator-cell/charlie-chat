@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CCS - PRODUCTION REALNUMBER DATABASE INTEGRATION ENGINE (PART 1)
+   CCS - PRODUCTION ARCHITECTURE: MATRIX CONTROLLERS & DATA POOLS (PART 1)
    ========================================================================== */
 
 // --- ENTERPRISE WEB SECURITY IDENTITY POOL (FIREBASE INITIALIZATION) ---
@@ -11,55 +11,71 @@ const firebaseConfig = {
     messagingSenderId: "435702870834",
     appId: "1:435702870834:web:a6e88a323381f6f3345d2b",
     measurementId: "G-0J9SMKN61S",
-    databaseURL: "https://firebaseio.com" // Real Free Cloud Database Bound
+    databaseURL: "https://firebaseio.com" // Real Cloud Database Connected
 };
 
-// Initialize Firebase Core and Subsystems
+// Initialize Firebase Core Components Securely
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const database = firebase.database(); // Live real-time node registry handle
+const database = firebase.database(); // Live Cloud Storage Reference Handle
 
-// --- NETWORK STATE LOGIC VARIABLES ---
+// --- GLOBAL NETWORKING DATA MATRIX TRACKERS ---
 const badWords = ["gali1", "gali2"]; 
 
-// Testing Node Note: Laptops local connectivity ke liye live backend laptop ka IPv4 address lagayein: io('http://192.168.1.10:3000')
+// Laptops testing local connectivity guide: Put server laptop's internal IPv4 if on same Wi-Fi
 const socket = io('https://onrender.com'); 
 
 let chatThemesDatabase = {};
 let currentActiveUserNode = null;
 let isRecordingAudio = false;
-let confirmationResultInstance = null; // Stores real-world SMS network stream tracker
-let myUserId = ""; // Core Application Runtime Session Pointer
+let confirmationResultInstance = null; // Cellular OTP handshake tracker
+let myUserId = ""; // Current active verified profile session id pointer
 
-// --- HARDWARE SUBSYSTEM MEDIA MEDIA STREAMS ---
+// --- HARDWARE DISCOVERY SUBSYSTEM MEDIA MEDIA STREAMS ---
 let localMediaStream = null;
 let screenShareStream = null;
 let mediaRecorderInstance = null;
 let recordedAudioChunks = [];
 
-// --- RESPONSIVE SECURE TAB ENGINE ---
+// --- CRITICAL COMPLIANCE FIX: RESPONSIVE OVERLAP TABS DISCOVERY ENGINE ---
 function switchLoginTab(tabId) {
-    const contents = ["phoneTab", "emailTab", "guestTab"];
-    contents.forEach(id => {
+    // Systems strictly array elements maps tracking targets
+    const allTabIds = ["phoneTab", "emailTab", "socialTab", "guestTab"];
+    
+    // Core engine loop forces absolute blind styling properties on inactive layers
+    allTabIds.forEach(id => {
         const element = document.getElementById(id);
+        if (element) {
+            element.style.setProperty('display', 'none', 'important'); // Overrides styling cascade errors
+        }
+        
+        // Clear highlighted border active states from header tab layouts
         const btn = document.getElementById("btn-" + id);
-        if(element) element.style.display = "none";
-        if(btn) btn.classList.remove("active");
+        if (btn) {
+            btn.classList.remove("active");
+        }
     });
     
+    // Explicit dynamic assignment to unlock single targeted stream viewport interface
     const targetElement = document.getElementById(tabId);
-    const targetBtn = document.getElementById("btn-" + tabId);
-    if(targetElement) targetElement.style.display = "flex";
-    if(targetBtn) targetBtn.classList.add("active");
+    if (targetElement) {
+        targetElement.style.setProperty('display', 'flex', 'important'); // Re-aligns elements in single crisp box
+    }
     
+    // Lock down active structural border color switch token
+    const targetBtn = document.getElementById("btn-" + tabId);
+    if (targetBtn) {
+        targetBtn.classList.add("active");
+    }
+    
+    // Flush out previous log error structures
     let errBox = document.getElementById('loginErrorMsg');
-    if(errBox) {
+    if (errBox) {
         errBox.style.display = 'none';
-        errBox.innerText = '';
     }
 }
 
-// --- AUTOMATIC FALLBACK 056-ID GENERATOR (FOR SOCIAL/GUEST ONLY) ---
+// --- ABSOLUTE RANDOM 056-ID GENERATOR FOR INTEGRATED SOCIALS & GUEST ACCESSIBILITY ---
 function generateCharlieNumber() {
     let prefix = "056";
     let remainingDigits = "";
@@ -69,25 +85,25 @@ function generateCharlieNumber() {
     return prefix + "-" + remainingDigits.substring(0,3) + remainingDigits.substring(3,7);
 }
 /* ==========================================================================
-   AUTHENTICATION LOGIC LAYER & VERIFICATION PIPELINES (PART 2)
+   AUTHENTICATION LOGIC LAYER & IDENTITY REGISTER DIRECTORY (PART 2)
    ========================================================================== */
 
-// --- INITIALIZE RECAPTCHA VERIFIER ON DOM MOUNT ---
+// --- ENTERPRISE WEB CAPTCHA ENGINE MOUNT INITIALIZATION ---
 window.onload = function() {
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
         'size': 'invisible',
-        'callback': (response) => { console.log("Security App Recaptcha verified successfully."); }
+        'callback': (response) => { console.log("Identity verification cleared."); }
     });
 };
 
-// --- REAL SMS DISPATCHER PIPELINE (WHATSAPP SPECIFICATION) ---
+// --- MULTI-CHANNEL ROUTING IDENTIFICATION RULES IMPLEMENTATION ---
 function sendRealSMSOTP() {
     let phoneInput = document.getElementById('realPhoneInput').value.trim();
     let errorBox = document.getElementById('loginErrorMsg');
     
     if(!phoneInput.startsWith('+')) {
         errorBox.style.display = "block";
-        errorBox.innerText = "Error: Input must include absolute country area prefix (e.g. +923001234567)";
+        errorBox.innerText = "Error: System requires absolute country code prefix (e.g. +923001234567)";
         return;
     }
 
@@ -95,11 +111,11 @@ function sendRealSMSOTP() {
         .then((confirmationResult) => {
             confirmationResultInstance = confirmationResult;
             document.getElementById('phoneInputArea').style.display = "none";
-            document.getElementById('otpInputArea').style.display = "flex";
+            document.getElementById('otpInputArea').style.setProperty('display', 'flex', 'important');
             errorBox.style.display = "none";
         }).catch((error) => {
             errorBox.style.display = "block";
-            errorBox.innerText = "Carrier Pipeline Denied: " + error.message;
+            errorBox.innerText = "Signal Exception: " + error.message;
         });
 }
 
@@ -109,25 +125,25 @@ function verifyRealOTPCode() {
 
     if(otpCode.length !== 6) {
         errorBox.style.display = "block";
-        errorBox.innerText = "Security violation: Handshake requires absolute 6-digit signature.";
+        errorBox.innerText = "Validation Exception: Handle token must look like 6 structural digits.";
         return;
     }
 
     confirmationResultInstance.confirm(otpCode)
         .then((result) => {
-            // RULE 1 CHOSEN: If logged via phone, their absolute user-id is their original phone number!
+            // WHATSAPP SECURITY RULE 1: Real cell login sets user original phone number as absolute User ID!
             grantApplicationAccess(result.user.phoneNumber);
         }).catch((error) => {
             errorBox.style.display = "block";
-            errorBox.innerText = "Identity Token Rejected: " + error.message;
+            errorBox.innerText = "Signature Verification Denied: " + error.message;
         });
 }
 
-// --- SECURE MULTI-PLATFORM OAUTH DRIVERS ---
+// --- SECURE INJECTED INTEGRATED PLATFORMS CONTROLLERS ---
 function loginWithGoogleReal() {
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider)
-        .then((result) => { grantApplicationAccess(generateCharlieNumber()); }) // Rule 2 applied: Social logins get 056-ID
+        .then((result) => { grantApplicationAccess(generateCharlieNumber()); }) // Social rules set automatic unique 056-ID
         .catch((err) => { showLoginError(err.message); });
 }
 
@@ -138,10 +154,16 @@ function loginWithFacebookReal() {
         .catch((err) => { showLoginError(err.message); });
 }
 
+function loginWithInstagramReal() {
+    const client_id = "YOUR_INSTAGRAM_CLIENT_ID";
+    const redirect_uri = window.location.href; 
+    window.location.href = `https://instagram.com{client_id}&redirect_uri=${redirect_uri}&scope=user_profile,user_media&response_type=code`;
+}
+
 function processRealEmailLogin() {
     let emailVal = document.getElementById('realEmailInput').value.trim();
     if (!emailVal.includes('@')) {
-        showLoginError("Error: Malformed email verification structure.");
+        showLoginError("Malformed data validation parameter structure.");
         return;
     }
     grantApplicationAccess(generateCharlieNumber());
@@ -151,17 +173,17 @@ function processRealGuestLogin() {
     grantApplicationAccess(generateCharlieNumber());
 }
 
-// --- REAL-WORLD CLOUD DATABASE PERSISTENCE ALLOCATOR ---
+// --- CORE SYSTEM REGISTRATION & LIFECYCLE CONTROLLERS ---
 function grantApplicationAccess(identityString) {
     myUserId = identityString;
     localStorage.setItem('charlie_auth_token', 'true');
     localStorage.setItem('charlie_assigned_num', identityString);
     
     document.getElementById('myDisplayCharlieNumber').innerText = identityString;
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('appMainContainer').style.display = 'flex';
+    document.getElementById('loginScreen').style.setProperty('display', 'none', 'important');
+    document.getElementById('appMainContainer').style.setProperty('display', 'flex', 'important');
     
-    // WHATSAPP RULE ENFORCED: Automatically save registered nodes inside real-time cloud data maps
+    // Mount allocation securely to real-time database matrix
     let safeCleanKey = identityString.replace(/[.#$\[\]]/g, "_");
     database.ref('registered_users/' + safeCleanKey).set({
         userNodeIdentity: identityString,
@@ -180,37 +202,29 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-function showLoginError(msg) {
-    let errorBox = document.getElementById('loginErrorMsg');
-    if(errorBox) {
-        errorBox.style.display = "block";
-        errorBox.innerText = "Gateway Handshake Denied: " + msg;
-    }
-}
-
-// --- REAL WHATSAPP CONTACT SCANNER (CLOUD REALTIME DATABASE CHECK) ---
+// --- DYNAMIC SEARCH ENGINES PARALLEL WITH REAL WHATSAPP BEHAVIORS ---
 function addNewContactToList() {
     const inputField = document.getElementById('newContactIdInput');
     let targetId = inputField.value.trim();
 
     if (!targetId) {
-        alert("Error: Please enter a valid identity number.");
+        alert("Error: String verification field cannot remain blank.");
         return;
     }
 
     let myCurrentNum = localStorage.getItem('charlie_assigned_num');
     if (targetId === myCurrentNum) {
-        alert("Security Error: Loop violation. You cannot track your own node.");
+        alert("Security Error: Identity loop tracker rejected. You cannot trace yourself.");
         return;
     }
 
-    // Direct dynamic search inside Firebase cloud records table
+    // Direct dynamic lookups to real-time cloud instance rows table
     let safeCleanKey = targetId.replace(/[.#$\[\]]/g, "_");
     database.ref('registered_users/' + safeCleanKey).once('value')
         .then((snapshot) => {
             if (!snapshot.exists()) {
-                // Strict Real WhatsApp behavior: Displays error if account doesn't exist
-                alert("Discovery Error: The identity number provided is not registered on Charlie system network records.");
+                // Strict WhatsApp behavior response mechanism
+                alert("Discovery Failure: The profile number or user 056-ID provided is not registered on Charlie system server files.");
                 return;
             }
 
@@ -218,21 +232,30 @@ function addNewContactToList() {
             const newChatItem = document.createElement('div');
             newChatItem.className = 'chat-item';
             
+            // Side navigation item row selection event trigger
             newChatItem.onclick = function() {
                 switchActiveChat(targetId, targetId);
             };
 
             newChatItem.innerHTML = `
                 <span class="user-name">${targetId}</span>
-                <span class="last-msg">🔑 Tap to connect transmission...</span>
+                <span class="last-msg">🔑 Tap to connect network transmission stream...</span>
             `;
 
             chatListContainer.appendChild(newChatItem);
             alert(`Pipeline verified successfully with active node: ${targetId}`);
             inputField.value = '';
         }).catch((err) => {
-            console.error("Database Lookup Fault: ", err);
+            console.error("Database Connection Fault: ", err);
         });
+}
+
+function showLoginError(msg) {
+    let errorBox = document.getElementById('loginErrorMsg');
+    if(errorBox) {
+        errorBox.style.setProperty('display', 'block', 'important');
+        errorBox.innerText = "Gateway Handshake Error: " + msg;
+    }
 }
 /* ==========================================================================
    DYNAMIC INTERFACE SWITCHING, THEMES & HARDWARE STREAM DRIVERS (PART 3)
@@ -242,6 +265,7 @@ function switchActiveChat(displayName, assignedCharlieNumber) {
     currentActiveUserNode = assignedCharlieNumber;
     document.getElementById('currentChatTitle').innerText = `${displayName}`;
     
+    // Clear active highlight markers across previous lists
     document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
     if(window.event && window.event.currentTarget) {
         window.event.currentTarget.classList.add('active');
@@ -253,6 +277,7 @@ function switchActiveChat(displayName, assignedCharlieNumber) {
     let colorPicker = document.getElementById('bgThemeColorPicker');
     if(colorPicker) colorPicker.value = storedColor;
     
+    // Refresh viewport workspace window log histories
     document.getElementById('chatBox').innerHTML = `<div class="message-bubble incoming">Protected channel connection initialized on node: ${assignedCharlieNumber}</div>`;
 }
 
@@ -271,7 +296,7 @@ async function triggerCall(callType) {
     
     document.getElementById('callTypeTitle').innerText = callType;
     document.getElementById('callTargetUser').innerText = `Connecting stream with node: ${currentActiveUserNode}`;
-    document.getElementById('callOverlay').style.display = 'flex';
+    document.getElementById('callOverlay').style.setProperty('display', 'flex', 'important');
 
     try {
         if (callType === "AUDIO CALL") {
@@ -296,7 +321,7 @@ async function triggerCall(callType) {
 }
 
 function endActiveCall() {
-    document.getElementById('callOverlay').style.display = 'none';
+    document.getElementById('callOverlay').style.setProperty('display', 'none', 'important');
     if (localMediaStream) {
         localMediaStream.getTracks().forEach(track => track.stop());
         localMediaStream = null;
