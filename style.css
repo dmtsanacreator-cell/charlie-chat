@@ -1,285 +1,457 @@
-// Local variables tracking network data states
-const badWords = ["gali1", "gali2"]; 
-const socket = io('https://onrender.com'); // Put live backend link here
-const myUserId = "charlie_node_" + Math.floor(Math.random() * 10000);
-
-let chatThemesDatabase = {
-    "056-9938102": "#050706",
-    "056-1120495": "#0d1117"
-};
-let currentActiveUserNode = "056-9938102";
-let isRecordingAudio = false;
-
-let localMediaStream = null;
-let screenShareStream = null;
-let mediaRecorderInstance = null;
-let recordedAudioChunks = [];
-
-socket.emit('register-user', myUserId);
-
-// --- FIXED WORKING TAB SWITCHER LOGIC ---
-function switchLoginTab(tabId) {
-    const contents = ["phoneTab", "emailTab", "guestTab"];
-    contents.forEach(id => {
-        document.getElementById(id).style.display = "none";
-        document.getElementById("btn-" + id).classList.remove("active");
-    });
-    
-    document.getElementById(tabId).style.display = "flex";
-    document.getElementById("btn-" + tabId).classList.add("active");
-    
-    let errBox = document.getElementById('loginErrorMsg');
-    errBox.style.display = 'none';
+/* ==========================================================================
+   CSS VARIABLES & GLOBAL OPERATIONS (CCS SYSTEM CORE)
+   ========================================================================== */
+:root {
+    --bg-deep-matrix: #050706;
+    --neon-purple-glow: #9c27b0;
+    --neon-cyber-cyan: #00ffcc;
+    --glass-opacity-dark: rgba(13, 17, 23, 0.85);
+    --border-secure-line: rgba(186, 104, 200, 0.25);
+    --text-terminal-pure: #ffffff;
+    --text-muted-dim: #8b949e;
+    --alert-crimson: #ff3333;
 }
 
-// --- OFFICIAL REAL GOOGLE SIGN-IN INITIALIZATION ---
-window.onload = function () {
-    google.accounts.id.initialize({
-        client_id: "://googleusercontent.com", // Simulated client id container
-        callback: handleGoogleCredentialResponse
-    });
-    
-    google.accounts.id.renderButton(
-        document.getElementById("googleSignInButton"),
-        { theme: "dark", size: "large", width: "100%", text: "continue_with" } 
-    );
-};
-
-function handleGoogleCredentialResponse(response) {
-    console.log("Secure JWT credential response caught from Google SDK.");
-    launchSecureCharlieSession("Google_User", "GOOGLE_OFFICIAL_OAUTH");
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Courier New', Courier, monospace;
+    user-select: none;
 }
 
-function generateCharlieNumber() {
-    let prefix = "056";
-    let remainingDigits = "";
-    for (let i = 0; i < 8; i++) {
-        remainingDigits += Math.floor(Math.random() * 10).toString();
-    }
-    return prefix + "-" + remainingDigits.substring(0,4) + remainingDigits.substring(4,8);
-}
-// --- REAL-WORLD PHONE VALIDATOR & NODE INITIALIZATION ---
-function processRealPhoneLogin() {
-    let phoneVal = document.getElementById('realPhoneInput').value.trim();
-    let errorLog = document.getElementById('loginErrorMsg');
-    
-    if (phoneVal.length  {
-    let checkToken = localStorage.getItem('charlie_auth_token');
-    let savedNumber = localStorage.getItem('charlie_assigned_num');
-    
-    if (checkToken === 'true' && savedNumber) {
-        document.getElementById('myDisplayCharlieNumber').innerText = savedNumber;
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('appMainContainer').style.display = 'flex';
-    }
-});
-// --- DYNAMIC INDIVIDUAL BACKGROUND THEME SEPARATE SWITCH SETTINGS ---
-function switchActiveChat(displayName, assignedCharlieNumber) {
-    currentActiveUserNode = assignedCharlieNumber;
-    document.getElementById('currentChatTitle').innerText = `${displayName} [${assignedCharlieNumber}]`;
-    
-    document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-
-    let storedColor = chatThemesDatabase[assignedCharlieNumber] || "#050706";
-    document.getElementById('activeChatWindow').style.backgroundColor = storedColor;
-    document.getElementById('bgThemeColorPicker').value = storedColor;
-    
-    document.getElementById('chatBox').innerHTML = `<div class="message-bubble incoming">Protected channel connection initialized on node: ${assignedCharlieNumber}</div>`;
+body, html {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-deep-matrix);
+    color: var(--text-terminal-pure);
+    overflow: hidden;
 }
 
-function customizeChatBackground(selectedHexColor) {
-    chatThemesDatabase[currentActiveUserNode] = selectedHexColor;
-    document.getElementById('activeChatWindow').style.backgroundColor = selectedHexColor;
+/* --- CANVAS LAYER FOR PURPLE SNOW-UP BACKGROUND --- */
+#bubbleCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
 }
 
-// --- WORKING AUDIO / VIDEO CALL & SCREEN SHARE LOGIC ---
-async function triggerCall(callType) {
-    document.getElementById('callTypeTitle').innerText = callType;
-    document.getElementById('callTargetUser').innerText = `Connecting stream with node: ${currentActiveUserNode}`;
-    document.getElementById('callOverlay').style.display = 'flex';
-
-    try {
-        if (callType === "AUDIO CALL") {
-            localMediaStream = await navigator.mediaDevices.getUserMedia({ 
-                audio: { channelCount: 1, sampleRate: 8000, echoCancellation: true, noiseSuppression: true } 
-            });
-        } 
-        else if (callType === "VIDEO CALL") {
-            localMediaStream = await navigator.mediaDevices.getUserMedia({ 
-                audio: { channelCount: 1, sampleRate: 8000 },
-                video: { width: { ideal: 160 }, height: { ideal: 120 }, frameRate: { ideal: 5 } }
-            });
-            createVideoPreviewElement();
-        } 
-        else if (callType === "SCREEN SHARE") {
-            screenShareStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-        }
-    } catch (hardwareError) {
-        console.error("Hardware Error:", hardwareError);
-        document.getElementById('callTargetUser').innerText = "⚠️ Line Error: Connection drop or denied.";
-    }
+/* ==========================================================================
+   AUTHENTICATION GATEWAY LAYER (LOGIN SCREEN OVERLAY)
+   ========================================================================== */
+.login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(15, 12, 30, 0.95) 0%, rgba(5, 7, 6, 1) 100%);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(8px);
+    padding: 20px;
 }
 
-function endActiveCall() {
-    document.getElementById('callOverlay').style.display = 'none';
-    if (localMediaStream) {
-        localMediaStream.getTracks().forEach(track => track.stop());
-        localMediaStream = null;
-    }
-    if (screenShareStream) {
-        screenShareStream.getTracks().forEach(track => track.stop());
-        screenShareStream = null;
-    }
-    let oldPreview = document.getElementById('localVideoPreview');
-    if (oldPreview) oldPreview.remove();
+.login-card {
+    background: var(--glass-opacity-dark);
+    border: 1px solid var(--border-secure-line);
+    border-radius: 12px;
+    padding: 35px;
+    width: 460px;
+    max-width: 100%;
+    box-shadow: 0 0 30px rgba(156, 39, 176, 0.2);
+    z-index: 102;
+    text-align: center;
+    overflow: hidden;
 }
 
-// --- WORKING REAL-TIME VOICE RECORDING NOTE ENGINE ---
-async function toggleVoiceRecording() {
-    let micButton = document.getElementById('micBtn');
-    isRecordingAudio = !isRecordingAudio;
-
-    if (isRecordingAudio) {
-        micButton.innerText = "🛑";
-        micButton.style.transform = "scale(1.3)";
-        recordedAudioChunks = [];
-
-        try {
-            let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorderInstance = new MediaRecorder(stream);
-            
-            mediaRecorderInstance.ondataavailable = (event) => {
-                if (event.data.size > 0) recordedAudioChunks.push(event.data);
-            };
-
-            mediaRecorderInstance.onstop = () => {
-                let audioBlob = new Blob(recordedAudioChunks, { type: 'audio/mp3' });
-                let audioUrl = URL.createObjectURL(audioBlob);
-                appendAudioVoiceMessage(audioUrl, 'outgoing');
-                stream.getTracks().forEach(track => track.stop());
-            };
-
-            mediaRecorderInstance.start();
-        } catch (err) {
-            console.error("Mic access denied:", err);
-            isRecordingAudio = false;
-            micButton.innerText = "🎙️";
-        }
-    } else {
-        micButton.innerText = "🎙️";
-        micButton.style.transform = "scale(1)";
-        if (mediaRecorderInstance && mediaRecorderInstance.state !== "inactive") {
-            mediaRecorderInstance.stop();
-        }
-    }
+.login-card h2 {
+    font-size: 1.3rem;
+    color: var(--neon-cyber-cyan);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    text-shadow: 0 0 8px rgba(0, 255, 204, 0.4);
 }
 
-function createVideoPreviewElement() {
-    if (document.getElementById('localVideoPreview')) return;
-    let videoTag = document.createElement('video');
-    videoTag.id = 'localVideoPreview';
-    videoTag.autoplay = true;
-    videoTag.playsInline = true;
-    videoTag.style.width = '200px'; videoTag.style.height = '150px';
-    videoTag.style.position = 'absolute'; videoTag.style.bottom = '20px'; videoTag.style.right = '20px';
-    videoTag.style.border = '1px solid #00ffcc'; videoTag.style.borderRadius = '8px'; videoTag.style.zIndex = '15';
-    videoTag.srcObject = localMediaStream;
-    document.getElementById('callOverlay').appendChild(videoTag);
+.login-card p {
+    font-size: 0.8rem;
+    color: var(--text-muted-dim);
+    margin-bottom: 25px;
+    line-height: 1.4;
 }
 
-function appendAudioVoiceMessage(audioUrl, type) {
-    const chatBox = document.getElementById('chatBox');
-    const msgDiv = document.createElement('div');
-    msgDiv.className = `message-bubble ${type}`;
-    msgDiv.innerHTML = `<audio src="${audioUrl}" controls style="max-width: 240px; height: 30px;"></audio>`;
-    chatBox.appendChild(msgDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
-// --- CORE SEND MESSAGE ENGINE ---
-function sendMessage() {
-    const input = document.getElementById('msgInput');
-    let rawText = input.value.trim();
-    if (!rawText) return;
-
-    let cleanText = rawText.toLowerCase();
-    for (let word of badWords) {
-        if (cleanText.includes(word)) {
-            socket.emit('report-policy-violation', myUserId);
-            document.body.innerHTML = "<div style='color:#ff3333; padding:50px; font-family:monospace;'>[CORE SUSPENSION: POLICY VIOLATION]</div>";
-            return;
-        }
-    }
-
-    appendMessage(rawText, 'outgoing');
-    socket.emit('send-encrypted-message', {
-        senderId: myUserId,
-        receiverId: currentActiveUserNode, 
-        encryptedPayload: btoa(rawText)
-    });
-    input.value = '';
+/* --- FUNCTIONAL TABS INTERFACE --- */
+.login-tabs {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 25px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 4px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-function appendMessage(text, type) {
-    const chatBox = document.getElementById('chatBox');
-    const msgDiv = document.createElement('div');
-    msgDiv.className = `message-bubble ${type}`;
-    msgDiv.innerText = text;
-    chatBox.appendChild(msgDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
+.tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-muted-dim);
+    padding: 10px 5px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
 }
 
-socket.on('receive-message', (data) => {
-    let decryptedText = atob(data.payload); 
-    appendMessage(decryptedText, 'incoming');
-});
-
-socket.on('account-banned', (msg) => {
-    document.body.innerHTML = `<div style='color:#ff3333; padding:50px; font-family:monospace;'>[TERMINATED: ${msg}]</div>`;
-});
-
-// --- FLOATING LIGHT PURPLE SNOW-UP BACKGROUND ANIME ENGINE ---
-const canvas = document.getElementById('bubbleCanvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-
-let bubblesArray = [];
-class BubbleParticle {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = canvas.height + Math.random() * 20;
-        this.size = Math.random() * 3 + 1;
-        this.speedY = Math.random() * 0.8 + 0.2;
-        this.color = 'rgba(186, 104, 200, 0.15)';
-    }
-    update() {
-        this.y -= this.speedY;
-        if (this.y < 0) {
-            this.y = canvas.height + 10;
-            this.x = Math.random() * canvas.width;
-        }
-    }
-    draw() {
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-    }
+.tab-btn:hover {
+    color: var(--text-terminal-pure);
 }
-function initBubbles() {
-    for (let i = 0; i < 60; i++) { bubblesArray.push(new BubbleParticle()); }
-}
-function animateBubblesLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let i = 0; i < bubblesArray.length; i++) {
-        bubblesArray[i].update();
-        bubblesArray[i].draw();
-    }
-    requestAnimationFrame(animateBubblesLoop);
-}
-initBubbles();
-animateBubblesLoop();
 
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-});
+.tab-btn.active {
+    background: var(--neon-purple-glow);
+    color: var(--text-terminal-pure);
+    box-shadow: 0 0 10px rgba(156, 39, 176, 0.5);
+}
+
+/* --- TAB CONTENT PANEL SYSTEM --- */
+.auth-tab-content {
+    display: none;
+    flex-direction: column;
+    text-align: left;
+    min-height: 140px;
+    justify-content: center;
+}
+
+.auth-tab-content.active {
+    display: flex;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted-dim);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.input-group input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--border-secure-line);
+    border-radius: 6px;
+    padding: 12px;
+    color: var(--neon-cyber-cyan);
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.input-group input:focus {
+    border-color: var(--neon-cyber-cyan);
+    box-shadow: 0 0 8px rgba(0, 255, 204, 0.2);
+}
+/* --- SOCIAL BUTTON STACK PIPELINE --- */
+.social-btn-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.social-provider-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.1s ease;
+}
+
+.social-provider-btn:active {
+    transform: scale(0.98);
+}
+
+.social-provider-btn.google {
+    background: #ffffff;
+    color: #1f1f1f;
+}
+
+.social-provider-btn.facebook {
+    background: #1877f2;
+    color: #ffffff;
+}
+
+.social-provider-btn.instagram {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    color: #ffffff;
+}
+
+/* --- CORE INITIALIZATION ACTION BUTTONS --- */
+.action-submit-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--neon-cyber-cyan);
+    color: var(--neon-cyber-cyan);
+    padding: 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s ease;
+}
+
+.action-submit-btn:hover {
+    background: var(--neon-cyber-cyan);
+    color: #000000;
+    box-shadow: 0 0 15px var(--neon-cyber-cyan);
+}
+
+.action-submit-btn.guest {
+    border-color: var(--neon-purple-glow);
+    color: #df78ef;
+}
+
+.action-submit-btn.guest:hover {
+    background: var(--neon-purple-glow);
+    color: var(--text-terminal-pure);
+    box-shadow: 0 0 15px var(--neon-purple-glow);
+}
+
+.guest-notice {
+    font-size: 0.75rem;
+    color: #e040fb;
+    background: rgba(224, 64, 251, 0.05);
+    padding: 12px;
+    border-left: 2px solid var(--neon-purple-glow);
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+/* --- ERROR LOGS & LABELS --- */
+.error-log-label {
+    background: rgba(255, 51, 51, 0.1);
+    color: var(--alert-crimson);
+    border: 1px solid var(--alert-crimson);
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 0.75rem;
+    margin-top: 15px;
+    text-align: left;
+}
+
+/* ==========================================================================
+   MAIN DASHBOARD WRAPPER (POST-AUTHENTICATION VIEW)
+   ========================================================================== */
+.app-fullscreen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    display: flex;
+}
+
+/* --- SIDEBAR: NUMBERS & CONNECTIONS --- */
+.sidebar {
+    width: 320px;
+    height: 100%;
+    background: rgba(13, 17, 23, 0.6);
+    border-right: 1px solid var(--border-secure-line);
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+}
+
+.sidebar-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--border-secure-line);
+}
+
+.app-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--text-terminal-pure);
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+.my-id-label {
+    font-size: 0.65rem;
+    color: var(--text-muted-dim);
+    letter-spacing: 1px;
+}
+
+.my-id-val {
+    font-size: 0.9rem;
+    color: var(--neon-cyber-cyan);
+    font-weight: bold;
+    margin-top: 4px;
+    word-break: break-all;
+}
+
+.chat-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.chat-item {
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(186, 104, 200, 0.08);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: background 0.2s ease;
+}
+
+.chat-item:hover {
+    background: rgba(156, 39, 176, 0.05);
+}
+
+.chat-item.active {
+    background: rgba(156, 39, 176, 0.12);
+    border-left: 3px solid var(--neon-purple-glow);
+}
+
+.chat-item .user-name {
+    font-size: 0.85rem;
+    color: var(--text-terminal-pure);
+    font-weight: bold;
+}
+
+.chat-item .last-msg {
+    font-size: 0.75rem;
+    color: var(--text-muted-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- MAIN ACTIVE CHAT WINDOW STREAMS --- */
+.main-chat-window {
+    flex: 1;
+    height: 100%;
+    background-color: #050706;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-window-header {
+    padding: 18px 24px;
+    background: rgba(13, 17, 23, 0.4);
+    border-bottom: 1px solid var(--border-secure-line);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
+
+.header-info-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.active-user {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: var(--text-terminal-pure);
+}
+
+.status-badge {
+    font-size: 0.7rem;
+    color: var(--neon-cyber-cyan);
+}
+
+/* --- MESSAGES LOG VIEWBOX CONTAINER --- */
+.messages-container {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.message-bubble {
+    max-width: 60%;
+    padding: 14px 18px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    border-radius: 8px;
+    word-wrap: break-word;
+}
+
+.message-bubble.incoming {
+    background: rgba(33, 38, 45, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-terminal-pure);
+    align-self: flex-start;
+    border-top-left-radius: 2px;
+}
+
+.message-bubble.outgoing {
+    background: rgba(156, 39, 176, 0.15);
+    border: 1px solid var(--border-secure-line);
+    color: #f3e5f5;
+    align-self: flex-end;
+    border-top-right-radius: 2px;
+}
+
+/* --- BOTTOM ENCRYPTED INPUT BAR ENGINE --- */
+.input-bar-container {
+    padding: 20px 30px;
+    background: rgba(13, 17, 23, 0.5);
+    border-top: 1px solid var(--border-secure-line);
+    backdrop-filter: blur(10px);
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+#msgInput {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-secure-line);
+    border-radius: 6px;
+    padding: 14px 18px;
+    color: var(--text-terminal-pure);
+    font-size: 0.85rem;
+    outline: none;
+}
+
+#msgInput:focus {
+    border-color: var(--neon-purple-glow);
+    box-shadow: 0 0 10px rgba(156, 39, 176, 0.2);
+}
+
+.send-action-btn {
+    background: var(--neon-purple-glow);
+    border: none;
+    color: var(--text-terminal-pure);
+    padding: 14px 24px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+
+.send-action-btn:hover {
+    box-shadow: 0 0 12px var(--neon-purple-glow);
+    opacity: 0.9;
+}
