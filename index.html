@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CCS - Real-World Secure Node</title>
+    <title>CCS - Charlie Communication System</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- Firebase App aur Auth SDKs (Real-time Integration ke liye) -->
+    <!-- Firebase App aur Auth SDKs -->
     <script src="https://gstatic.com"></script>
     <script src="https://gstatic.com"></script>
     <!-- Socket.io System -->
@@ -14,9 +14,10 @@
 </head>
 <body>
 
+    <!-- Background Canvas for Purple Snow-Up Effect -->
     <canvas id="bubbleCanvas"></canvas>
 
-    <!-- UI ERROR CODES FIXED: Real Responsive Overlay Container -->
+    <!-- REAL-WORLD FUNCTIONAL AUTHENTICATION GATEWAY -->
     <div id="loginScreen" class="login-overlay">
         <div class="login-card">
             <h2>CCS CORE AUTH INTERFACE</h2>
@@ -32,16 +33,15 @@
             <div id="phoneTab" class="auth-tab-content active">
                 <div class="input-group" id="phoneInputArea">
                     <label>Enter Phone Number (With Country Code):</label>
-                    <input type="tel" id="realPhoneInput" placeholder="+923001234567">
-                    <!-- Firebase Recaptcha (Zaroori hai real SMS bhejne ke liye) -->
+                    <input type="tel" id="realPhoneInput" placeholder="+923001234567" autocomplete="off">
                     <div id="recaptcha-container" style="margin-top: 10px;"></div>
                     <button class="action-submit-btn" style="margin-top: 10px;" onclick="sendRealSMSOTP()">SEND VERIFICATION CODE</button>
                 </div>
                 
-                <!-- OTP Code Field (Hidden until SMS is sent successfully) -->
+                <!-- OTP Code Field -->
                 <div class="input-group" id="otpInputArea" style="display: none;">
                     <label>Enter 6-Digit OTP Code:</label>
-                    <input type="text" id="realOTPInput" placeholder="123456">
+                    <input type="text" id="realOTPInput" placeholder="123456" autocomplete="off">
                     <button class="action-submit-btn verification" onclick="verifyRealOTPCode()">VERIFY & INITIALIZE NODE</button>
                 </div>
             </div>
@@ -49,19 +49,13 @@
             <!-- TAB 2: Real Federated Social Sign-In Buttons -->
             <div id="socialTab" class="auth-tab-content">
                 <div class="social-btn-stack">
-                    <button class="social-provider-btn google" onclick="loginWithGoogleReal()">
-                         Continue with Google Official
-                    </button>
-                    <button class="social-provider-btn facebook" onclick="loginWithFacebookReal()">
-                         Continue with Facebook Secure
-                    </button>
-                    <button class="social-provider-btn instagram" onclick="loginWithInstagramReal()">
-                         Connect Instagram Profile
-                    </button>
+                    <button class="social-provider-btn google" onclick="loginWithGoogleReal()">Continue with Google Official</button>
+                    <button class="social-provider-btn facebook" onclick="loginWithFacebookReal()">Continue with Facebook Secure</button>
+                    <button class="social-provider-btn instagram" onclick="loginWithInstagramReal()">Connect Instagram Profile</button>
                 </div>
             </div>
 
-            <!-- TAB 3: Guest Token Layer -->
+            <!-- TAB 3: Guest Gateway -->
             <div id="guestTab" class="auth-tab-content">
                 <div class="guest-notice">> Volatile node generation bypasses database tracking. Temporary token only.</div>
                 <button class="action-submit-btn guest" onclick="processRealGuestLogin()">LAUNCH ANONYMOUS GUEST NODE</button>
@@ -71,16 +65,34 @@
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD -->
+    <!-- Calling Pop-up Interface Layer -->
+    <div id="callOverlay" class="call-popup-overlay">
+        <div class="call-card">
+            <h2 id="callTypeTitle">AUDIO CALL</h2>
+            <p id="callTargetUser">Connecting stream...</p>
+            <div class="call-animation">● ● ●</div>
+            <button class="end-call-btn" onclick="endActiveCall()">END CALL</button>
+        </div>
+    </div>
+
+    <!-- MAIN APP INTERFACE CONTAINER -->
     <div class="app-fullscreen" id="appMainContainer" style="display: none;">
-        <!-- Sidebar and Active Chats remains attached perfectly inside layout structure -->
+        
+        <!-- SIDEBAR: Numbers & Social Profiles -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <div class="app-title">Charlie Core</div>
                 <div class="my-id-label">AUTHENTICATED IDENTITY:</div>
                 <div class="my-id-val" id="myDisplayCharlieNumber">Connecting...</div>
             </div>
-            <div class="chat-list">
+
+            <!-- WHATSAPP-STYLE NEW CONTACT ADDER BOX -->
+            <div class="add-contact-box">
+                <input type="text" id="newContactIdInput" placeholder="Enter Friend's ID..." autocomplete="off">
+                <button onclick="addNewContactToList()">+ ADD</button>
+            </div>
+            
+            <div class="chat-list" id="chatListRegistry">
                 <div class="chat-item active" onclick="switchActiveChat('User_Alpha', '056-9938102')">
                     <span class="user-name">User [056-9938102]</span>
                     <span class="last-msg">🔑 Operational pipeline ready.</span>
@@ -88,21 +100,32 @@
             </div>
         </div>
 
+        <!-- MAIN DASHBOARD: Full Screen Chat Box Window -->
         <div class="main-chat-window" id="activeChatWindow">
             <div class="chat-window-header">
                 <div class="header-info-left">
                     <span class="active-user" id="currentChatTitle">Select Node Stream</span>
                     <span class="status-badge">● End-to-End Cryptography Active</span>
                 </div>
+                <div class="header-tools-right">
+                    <button class="tool-btn" title="Audio Call" onclick="triggerCall('AUDIO CALL')">📞</button>
+                    <button class="tool-btn" title="Video Call" onclick="triggerCall('VIDEO CALL')">📹</button>
+                    <button class="tool-btn" title="Screen Share" onclick="triggerCall('SCREEN SHARE')">🖥️</button>
+                    <input type="color" id="bgThemeColorPicker" value="#050706" title="Change Chat Wallpaper" onchange="customizeChatBackground(this.value)">
+                </div>
             </div>
+
             <div class="messages-container" id="chatBox">
                 <div class="message-bubble incoming">Select a connection pipeline to view records.</div>
             </div>
+
             <div class="input-bar-container">
-                <input type="text" id="msgInput" placeholder="Type verified payload...">
+                <button class="tool-btn" title="Record Voice" id="micBtn" onclick="toggleVoiceRecording()">🎙️</button>
+                <input type="text" id="msgInput" placeholder="Type verified payload..." autocomplete="off">
                 <button class="send-action-btn" onclick="sendMessage()">EXEC SEND</button>
             </div>
         </div>
+
     </div>
 
     <script src="app.js"></script>
