@@ -1,3 +1,7 @@
+/* ==========================================================================
+   CCS - CHARLIE COMMUNICATION SYSTEM CONFIGURATION & CORE ENGINE
+   ========================================================================== */
+
 // --- ENTERPRISE WEB SECURITY IDENTITY POOL (FIREBASE INITIALIZATION) ---
 const firebaseConfig = {
     apiKey: "AIzaSyB2szPQPPaZ9UyY9AYbTDqemti_No6KO-4",
@@ -8,13 +12,16 @@ const firebaseConfig = {
     appId: "1:435702870834:web:a6e88a323381f6f3345d2b",
     measurementId: "G-0J9SMKN61S"
 };
+
 // Initialize Firebase Security Framework securely
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
 // --- NETWORK STATE LOGIC VARIABLES ---
 const badWords = ["gali1", "gali2"]; 
-const socket = io('https://onrender.com'); // Put your live backend Node server URL here
+
+// Testing Note: Put your live Render URL or Local IP address (e.g. http://192.168.1.10:3000) inside io()
+const socket = io('https://onrender.com'); 
 const myUserId = "charlie_node_" + Math.floor(Math.random() * 10000);
 
 let chatThemesDatabase = {
@@ -154,14 +161,6 @@ function grantApplicationAccess(identityString) {
     document.getElementById('appMainContainer').style.display = 'flex';
 }
 
-function showLoginError(msg) {
-    let errorBox = document.getElementById('loginErrorMsg');
-    if(errorBox) {
-        errorBox.style.display = "block";
-        errorBox.innerText = "Gateway Handshake Denied: " + msg;
-    }
-}
-
 // --- PERSISTENT SEED TOKEN VALIDATOR ENGINE ---
 window.addEventListener('DOMContentLoaded', () => {
     let checkToken = localStorage.getItem('charlie_auth_token');
@@ -173,9 +172,18 @@ window.addEventListener('DOMContentLoaded', () => {
         document.getElementById('appMainContainer').style.display = 'flex';
     }
 });
+
+function showLoginError(msg) {
+    let errorBox = document.getElementById('loginErrorMsg');
+    if(errorBox) {
+        errorBox.style.display = "block";
+        errorBox.innerText = "Gateway Handshake Denied: " + msg;
+    }
+}
 /* ==========================================================================
-   DYNAMIC INTERFACE SWITCHING & MULTI-THEME DATABASE MANAGERS
+   DYNAMIC INTERFACE SWITCHING, MESSAGING & CONTACT ADDER PIPELINES
    ========================================================================== */
+
 function switchActiveChat(displayName, assignedCharlieNumber) {
     currentActiveUserNode = assignedCharlieNumber;
     document.getElementById('currentChatTitle').innerText = `${displayName} [${assignedCharlieNumber}]`;
@@ -187,7 +195,9 @@ function switchActiveChat(displayName, assignedCharlieNumber) {
 
     let storedColor = chatThemesDatabase[assignedCharlieNumber] || "#050706";
     document.getElementById('activeChatWindow').style.backgroundColor = storedColor;
-    document.getElementById('bgThemeColorPicker').value = storedColor;
+    
+    let colorPicker = document.getElementById('bgThemeColorPicker');
+    if(colorPicker) colorPicker.value = storedColor;
     
     document.getElementById('chatBox').innerHTML = `<div class="message-bubble incoming">Protected channel connection initialized on node: ${assignedCharlieNumber}</div>`;
 }
@@ -195,6 +205,44 @@ function switchActiveChat(displayName, assignedCharlieNumber) {
 function customizeChatBackground(selectedHexColor) {
     chatThemesDatabase[currentActiveUserNode] = selectedHexColor;
     document.getElementById('activeChatWindow').style.backgroundColor = selectedHexColor;
+}
+
+// --- NEW FEATURE: WHATSAPP-STYLE DYNAMIC CONTACT ADDER ENGINE ---
+function addNewContactToList() {
+    const inputField = document.getElementById('newContactIdInput');
+    let targetId = inputField.value.trim();
+
+    if (!targetId) {
+        alert("Please enter a valid User ID or Number.");
+        return;
+    }
+
+    let myCurrentSavedNum = localStorage.getItem('charlie_assigned_num') || myUserId;
+    if (targetId === myCurrentSavedNum) {
+        alert("Security Loop: You cannot add your own Node Identity.");
+        return;
+    }
+
+    const chatListContainer = document.querySelector('.chat-list');
+    const newChatItem = document.createElement('div');
+    newChatItem.className = 'chat-item';
+    
+    let dynamicDisplayName = targetId.length > 12 ? targetId.substring(0, 10) + "..." : targetId;
+    
+    newChatItem.onclick = function() {
+        switchActiveChat(dynamicDisplayName, targetId);
+    };
+
+    newChatItem.innerHTML = `
+        <span class="user-name">${dynamicDisplayName}</span>
+        <span class="last-msg">🔑 Tap to initialize transmission.</span>
+    `;
+
+    chatListContainer.appendChild(newChatItem);
+    chatThemesDatabase[targetId] = "#050706";
+    inputField.value = '';
+    
+    alert(`Success: Secure pipeline established with node [${dynamicDisplayName}]`);
 }
 
 /* ==========================================================================
@@ -240,8 +288,6 @@ function endActiveCall() {
     let oldPreview = document.getElementById('localVideoPreview');
     if (oldPreview) oldPreview.remove();
 }
-
-// --- HARDWARE RECORDING ENGINE FOR REAL-TIME AUDIO ENVELOPES ---
 async function toggleVoiceRecording() {
     let micButton = document.getElementById('micBtn');
     isRecordingAudio = !isRecordingAudio;
@@ -304,7 +350,7 @@ function appendAudioVoiceMessage(audioUrl, type) {
 }
 
 /* ==========================================================================
-   CORE messaging ROUTING ENGINE & SOCKET PROTOCOLS
+   CORE MESSAGING ROUTING ENGINE & SOCKET PROTOCOLS
    ========================================================================== */
 function sendMessage() {
     const input = document.getElementById('msgInput');
@@ -315,7 +361,7 @@ function sendMessage() {
     for (let word of badWords) {
         if (cleanText.includes(word)) {
             socket.emit('report-policy-violation', myUserId);
-            document.body.innerHTML = "<div style='color:#ff3333; padding:50px; font-family:monospace;'>[CORE SUSPENSION: SECURITY COMPLIANCE POLICY VIOLATION ANOMALY]</div>";
+            document.body.innerHTML = "<div style='color:#ff3333; padding:50px; font-family:monospace;'>[CORE SUSPENSION: POLICY VIOLATION]</div>";
             return;
         }
     }
@@ -324,7 +370,7 @@ function sendMessage() {
     socket.emit('send-encrypted-message', {
         senderId: myUserId,
         receiverId: currentActiveUserNode, 
-        encryptedPayload: btoa(rawText) // Dynamic Base64 structural encryption frame conversion
+        encryptedPayload: btoa(rawText)
     });
     input.value = '';
 }
@@ -338,7 +384,6 @@ function appendMessage(text, type) {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// --- CRYPTOGRAPHIC NETWORK ASYNC RECEPTION MODULES ---
 socket.on('receive-message', (data) => {
     if (data.senderId === currentActiveUserNode || data.receiverId === myUserId) {
         let decryptedText = atob(data.encryptedPayload || data.payload); 
@@ -347,11 +392,11 @@ socket.on('receive-message', (data) => {
 });
 
 socket.on('account-banned', (msg) => {
-    document.body.innerHTML = `<div style='color:#ff3333; padding:50px; font-family:monospace;'>[NODE ACCESS VOLATILE DISCONNECT TERMINATED: ${msg}]</div>`;
+    document.body.innerHTML = `<div style='color:#ff3333; padding:50px; font-family:monospace;'>[NODE DISCONNECT TERMINATED: ${msg}]</div>`;
 });
 
 /* ==========================================================================
-   MATRIC LAYER ENGINE ANIMATION SYSTEMS
+   MATRIC LAYER ENGINE ANIMATION SYSTEMS (CANVAS BACKGROUND LOOP)
    ========================================================================== */
 const canvas = document.getElementById('bubbleCanvas');
 const ctx = canvas.getContext('2d');
