@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charlie Chat FullScreen</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://socket.io"></script>
+</head>
+<body>
+
+    <!-- Background Canvas for Purple Snow-Up Effect -->
+    <canvas id="bubbleCanvas"></canvas>
+
+    <!-- Calling Pop-up Interface Layer -->
+    <div id="callOverlay" class="call-popup-overlay">
+        <div class="call-card">
+            <h2 id="callTypeTitle">AUDIO CALL</h2>
+            <p id="callTargetUser">Connecting to 056-XXXXXXX...</p>
+            <div class="call-animation">● ● ●</div>
+            <button class="end-call-btn" onclick="endActiveCall()">END CALL</button>
+        </div>
+    </div>
+
+    <!-- Full Screen App Interface Container -->
+    <div class="app-fullscreen">
+        
+        <!-- SIDEBAR: Numbers & Social Profiles -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="app-title">Charlie Chat</div>
+                <div class="my-id-label">YOUR PROFILE ID:</div>
+                <div class="my-id-val">056-4829104</div>
+            </div>
+            
+            <div class="chat-list">
+                <div class="chat-item active" onclick="switchActiveChat('+92 300 1234567', '056-9938102')">
+                    <span class="user-name">User [056-9938102]</span>
+                    <span class="last-msg">🔑 Encrypted pipeline active.</span>
+                </div>
+                <div class="chat-item" onclick="switchActiveChat('+92 321 7654321', '056-1120495')">
+                    <span class="user-name">User [056-1120495]</span>
+                    <span class="last-msg">> Secure node active.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN DASHBOARD: Full Screen Chat Box Window -->
+        <div class="main-chat-window" id="activeChatWindow">
+            
+            <!-- Window Top Controls Bar -->
+            <div class="chat-window-header">
+                <div class="header-info-left">
+                    <span class="active-user" id="currentChatTitle">User [056-9938102]</span>
+                    <span class="status-badge">● End-to-End Encrypted</span>
+                </div>
+                
+                <!-- Advanced Multi-Media Feature Action Controls -->
+                <div class="header-tools-right">
+                    <button class="tool-btn" title="Audio Call" onclick="triggerCall('AUDIO CALL')">📞</button>
+                    <button class="tool-btn" title="Video Call" onclick="triggerCall('VIDEO CALL')">📹</button>
+                    <button class="tool-btn" title="Screen Share" onclick="triggerCall('SCREEN SHARE')">🖥️</button>
+                    
+                    <!-- Dynamic BG Theme Picker Color Control Box -->
+                    <input type="color" id="bgThemeColorPicker" value="#0a0c0b" title="Change Chat Wallpaper" onchange="customizeChatBackground(this.value)">
+                </div>
+            </div>
+
+            <!-- Main Messages Container Area -->
+            <div class="messages-container" id="chatBox">
+                <div class="message-bubble incoming">
+                    Welcome to Charlie Chat Premium Core. Transmission loops generated successfully.
+                </div>
+            </div>
+
+            <!-- Footer Message Processing & Input Box Area -->
+            <div class="input-bar-container">
+                <button class="tool-btn" title="Record Voice" id="micBtn" onclick="toggleVoiceRecording()">🎙️</button>
+                <input type="text" id="msgInput" placeholder="Type a secure encrypted payload..." autocomplete="off">
+                <button class="send-action-btn" onclick="sendMessage()">EXEC SEND</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
