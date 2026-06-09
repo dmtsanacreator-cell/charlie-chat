@@ -1,7 +1,8 @@
 /* ==========================================================================
-   CCS - PRODUCTION DYNAMIC USER-ID ROUTING ARCHITECTURE (PART 1)
-   ========================================================================= */
+   CCS - PRODUCTION REALNUMBER DATABASE INTEGRATION ENGINE (PART 1)
+   ========================================================================== */
 
+// --- ENTERPRISE WEB SECURITY IDENTITY POOL (FIREBASE INITIALIZATION) ---
 const firebaseConfig = {
     apiKey: "AIzaSyB2szPQPPaZ9UyY9AYbTDqemti_No6KO-4",
     authDomain: "://firebaseapp.com",
@@ -9,31 +10,56 @@ const firebaseConfig = {
     storageBucket: "://appspot.com",
     messagingSenderId: "435702870834",
     appId: "1:435702870834:web:a6e88a323381f6f3345d2b",
-    measurementId: "G-0J9SMKN61S"
+    measurementId: "G-0J9SMKN61S",
+    databaseURL: "https://firebaseio.com" // Real Free Cloud Database Bound
 };
 
-// Initialize Identity Provider Engines
+// Initialize Firebase Core and Subsystems
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const database = firebase.database(); // Live real-time node registry handle
 
-const badWords = ["gali1", "gali2"];
+// --- NETWORK STATE LOGIC VARIABLES ---
+const badWords = ["gali1", "gali2"]; 
 
-// LOCAL ENVIRONMENT NETWORK MATRIX TRACKER
-// Testing Node Note: Laptops connectivity ke liye server laptop ka IPv4 address lagayein: io('http://192.168.1.10:3000')
+// Testing Node Note: Laptops local connectivity ke liye live backend laptop ka IPv4 address lagayein: io('http://192.168.1.10:3000')
 const socket = io('https://onrender.com'); 
 
 let chatThemesDatabase = {};
 let currentActiveUserNode = null;
 let isRecordingAudio = false;
-let confirmationResultInstance = null;
-let myUserId = ""; // Application Core Session Runtime Pointer
+let confirmationResultInstance = null; // Stores real-world SMS network stream tracker
+let myUserId = ""; // Core Application Runtime Session Pointer
 
+// --- HARDWARE SUBSYSTEM MEDIA MEDIA STREAMS ---
 let localMediaStream = null;
 let screenShareStream = null;
 let mediaRecorderInstance = null;
 let recordedAudioChunks = [];
 
-// --- STRICT 056-ID GENERATOR FOR INTEGRATED SOCIAL/GUEST PLATFORMS ---
+// --- RESPONSIVE SECURE TAB ENGINE ---
+function switchLoginTab(tabId) {
+    const contents = ["phoneTab", "emailTab", "guestTab"];
+    contents.forEach(id => {
+        const element = document.getElementById(id);
+        const btn = document.getElementById("btn-" + id);
+        if(element) element.style.display = "none";
+        if(btn) btn.classList.remove("active");
+    });
+    
+    const targetElement = document.getElementById(tabId);
+    const targetBtn = document.getElementById("btn-" + tabId);
+    if(targetElement) targetElement.style.display = "flex";
+    if(targetBtn) targetBtn.classList.add("active");
+    
+    let errBox = document.getElementById('loginErrorMsg');
+    if(errBox) {
+        errBox.style.display = 'none';
+        errBox.innerText = '';
+    }
+}
+
+// --- AUTOMATIC FALLBACK 056-ID GENERATOR (FOR SOCIAL/GUEST ONLY) ---
 function generateCharlieNumber() {
     let prefix = "056";
     let remainingDigits = "";
@@ -42,40 +68,26 @@ function generateCharlieNumber() {
     }
     return prefix + "-" + remainingDigits.substring(0,3) + remainingDigits.substring(3,7);
 }
+/* ==========================================================================
+   AUTHENTICATION LOGIC LAYER & VERIFICATION PIPELINES (PART 2)
+   ========================================================================== */
 
-function switchLoginTab(tabId) {
-    const contents = ["phoneTab", "emailTab", "guestTab"]; // UI views mapping elements
-    contents.forEach(id => {
-        const element = document.getElementById(id);
-        if(element) element.style.display = "none";
-        
-        // Handle target tab button styling reset safely
-        const btn = document.getElementById("btn-" + id);
-        if(btn) btn.classList.remove("active");
-    });
-    
-    const targetElement = document.getElementById(tabId);
-    if(targetElement) targetElement.style.display = "flex";
-    
-    const targetBtn = document.getElementById("btn-" + tabId);
-    if(targetBtn) targetBtn.classList.add("active");
-}
-// --- INTERPRISE RECAPTCHA VERIFIER INITIALIZATION ---
+// --- INITIALIZE RECAPTCHA VERIFIER ON DOM MOUNT ---
 window.onload = function() {
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
         'size': 'invisible',
-        'callback': (response) => { console.log("Identity compliance check complete."); }
+        'callback': (response) => { console.log("Security App Recaptcha verified successfully."); }
     });
 };
 
-// --- CHANNEL 1: CELLULAR SMS NETWORK VALIDATORS ---
+// --- REAL SMS DISPATCHER PIPELINE (WHATSAPP SPECIFICATION) ---
 function sendRealSMSOTP() {
     let phoneInput = document.getElementById('realPhoneInput').value.trim();
     let errorBox = document.getElementById('loginErrorMsg');
     
     if(!phoneInput.startsWith('+')) {
         errorBox.style.display = "block";
-        errorBox.innerText = "Error: System requires absolute country code prefix (e.g. +923001234567)";
+        errorBox.innerText = "Error: Input must include absolute country area prefix (e.g. +923001234567)";
         return;
     }
 
@@ -87,7 +99,7 @@ function sendRealSMSOTP() {
             errorBox.style.display = "none";
         }).catch((error) => {
             errorBox.style.display = "block";
-            errorBox.innerText = "Carrier Signal Exception: " + error.message;
+            errorBox.innerText = "Carrier Pipeline Denied: " + error.message;
         });
 }
 
@@ -97,28 +109,26 @@ function verifyRealOTPCode() {
 
     if(otpCode.length !== 6) {
         errorBox.style.display = "block";
-        errorBox.innerText = "Compliance rule failed: Verification signature token must be 6-digits.";
+        errorBox.innerText = "Security violation: Handshake requires absolute 6-digit signature.";
         return;
     }
 
     confirmationResultInstance.confirm(otpCode)
         .then((result) => {
-            // RULE 1 CHOSEN: If logged via phone, their absolute User ID is their real phone number!
+            // RULE 1 CHOSEN: If logged via phone, their absolute user-id is their original phone number!
             grantApplicationAccess(result.user.phoneNumber);
         }).catch((error) => {
             errorBox.style.display = "block";
-            errorBox.innerText = "Authorization Signature Rejected: " + error.message;
+            errorBox.innerText = "Identity Token Rejected: " + error.message;
         });
 }
 
-// --- SECURE MULTI-PLATFORM OAUTH DRIVERS (GOOGLE / FACEBOOK / INSTAGRAM / EMAIL / GUEST) ---
+// --- SECURE MULTI-PLATFORM OAUTH DRIVERS ---
 function loginWithGoogleReal() {
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider)
-        .then((result) => { 
-            // RULE 2 CHOSEN: Not phone? Generate custom 056-ID allocation!
-            grantApplicationAccess(generateCharlieNumber()); 
-        }).catch((err) => { showLoginError(err.message); });
+        .then((result) => { grantApplicationAccess(generateCharlieNumber()); }) // Rule 2 applied: Social logins get 056-ID
+        .catch((err) => { showLoginError(err.message); });
 }
 
 function loginWithFacebookReal() {
@@ -128,29 +138,20 @@ function loginWithFacebookReal() {
         .catch((err) => { showLoginError(err.message); });
 }
 
-function loginWithInstagramReal() {
-    // Client Side Implicit Redirect flow handling
-    const client_id = "YOUR_INSTAGRAM_CLIENT_ID";
-    const redirect_uri = window.location.href; 
-    window.location.href = `https://instagram.com{client_id}&redirect_uri=${redirect_uri}&scope=user_profile,user_media&response_type=code`;
-}
-
 function processRealEmailLogin() {
     let emailVal = document.getElementById('realEmailInput').value.trim();
     if (!emailVal.includes('@')) {
-        showLoginError("Error: Malformed verification string data.");
+        showLoginError("Error: Malformed email verification structure.");
         return;
     }
-    // Rule 2 applied for manual email integration
     grantApplicationAccess(generateCharlieNumber());
 }
 
 function processRealGuestLogin() {
-    // Rule 2 applied for anonymous node configuration
     grantApplicationAccess(generateCharlieNumber());
 }
 
-// --- REGISTER DIRECTORY ENGINE & LIFECYCLE CONTROLLERS ---
+// --- REAL-WORLD CLOUD DATABASE PERSISTENCE ALLOCATOR ---
 function grantApplicationAccess(identityString) {
     myUserId = identityString;
     localStorage.setItem('charlie_auth_token', 'true');
@@ -160,7 +161,14 @@ function grantApplicationAccess(identityString) {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appMainContainer').style.display = 'flex';
     
-    // Mount profile securely into active traffic tables instantly
+    // WHATSAPP RULE ENFORCED: Automatically save registered nodes inside real-time cloud data maps
+    let safeCleanKey = identityString.replace(/[.#$\[\]]/g, "_");
+    database.ref('registered_users/' + safeCleanKey).set({
+        userNodeIdentity: identityString,
+        timestamp: Date.now(),
+        status: "online"
+    });
+    
     socket.emit('register-user', identityString);
 }
 
@@ -172,56 +180,59 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// --- REAL-WORLD CONTACT EXPLORER LOOPS (WHATSAPP PARALLEL STRUCTURES) ---
+function showLoginError(msg) {
+    let errorBox = document.getElementById('loginErrorMsg');
+    if(errorBox) {
+        errorBox.style.display = "block";
+        errorBox.innerText = "Gateway Handshake Denied: " + msg;
+    }
+}
+
+// --- REAL WHATSAPP CONTACT SCANNER (CLOUD REALTIME DATABASE CHECK) ---
 function addNewContactToList() {
     const inputField = document.getElementById('newContactIdInput');
     let targetId = inputField.value.trim();
 
     if (!targetId) {
-        alert("Error: Please enter an ID or Number.");
+        alert("Error: Please enter a valid identity number.");
         return;
     }
 
     let myCurrentNum = localStorage.getItem('charlie_assigned_num');
     if (targetId === myCurrentNum) {
-        alert("Security Error: Loop violation. You cannot track yourself.");
+        alert("Security Error: Loop violation. You cannot track your own node.");
         return;
     }
 
-    // Handshake check against live backend database cluster
-    socket.emit('check-user-existence', targetId, (exists) => {
-        if (!exists) {
-            // Strict WhatsApp Response Engine Behavior
-            alert("Discovery Error: The identity or phone number provided is not registered on Charlie System network records.");
-            return;
-        }
+    // Direct dynamic search inside Firebase cloud records table
+    let safeCleanKey = targetId.replace(/[.#$\[\]]/g, "_");
+    database.ref('registered_users/' + safeCleanKey).once('value')
+        .then((snapshot) => {
+            if (!snapshot.exists()) {
+                // Strict Real WhatsApp behavior: Displays error if account doesn't exist
+                alert("Discovery Error: The identity number provided is not registered on Charlie system network records.");
+                return;
+            }
 
-        const chatListContainer = document.querySelector('.chat-list');
-        const newChatItem = document.createElement('div');
-        newChatItem.className = 'chat-item';
-        
-        // FIXED ACTION LAYERS: Side row binding unlocks direct interaction rooms!
-        newChatItem.onclick = function() {
-            switchActiveChat(targetId, targetId);
-        };
+            const chatListContainer = document.querySelector('.chat-list');
+            const newChatItem = document.createElement('div');
+            newChatItem.className = 'chat-item';
+            
+            newChatItem.onclick = function() {
+                switchActiveChat(targetId, targetId);
+            };
 
-        newChatItem.innerHTML = `
-            <span class="user-name">${targetId}</span>
-            <span class="last-msg">🔑 Tap to connect session pipeline...</span>
-        `;
+            newChatItem.innerHTML = `
+                <span class="user-name">${targetId}</span>
+                <span class="last-msg">🔑 Tap to connect transmission...</span>
+            `;
 
-        chatListContainer.appendChild(newChatItem);
-        alert(`Pipeline bound successfully with identity node: ${targetId}`);
-        inputField.value = '';
-    });
-}
-
-function showLoginError(msg) {
-    let errorBox = document.getElementById('loginErrorMsg');
-    if(errorBox) {
-        errorBox.style.display = "block";
-        errorBox.innerText = "Handshake Failure: " + msg;
-    }
+            chatListContainer.appendChild(newChatItem);
+            alert(`Pipeline verified successfully with active node: ${targetId}`);
+            inputField.value = '';
+        }).catch((err) => {
+            console.error("Database Lookup Fault: ", err);
+        });
 }
 /* ==========================================================================
    DYNAMIC INTERFACE SWITCHING, THEMES & HARDWARE STREAM DRIVERS (PART 3)
@@ -231,7 +242,6 @@ function switchActiveChat(displayName, assignedCharlieNumber) {
     currentActiveUserNode = assignedCharlieNumber;
     document.getElementById('currentChatTitle').innerText = `${displayName}`;
     
-    // Reset active style on side panel lists
     document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
     if(window.event && window.event.currentTarget) {
         window.event.currentTarget.classList.add('active');
@@ -243,7 +253,6 @@ function switchActiveChat(displayName, assignedCharlieNumber) {
     let colorPicker = document.getElementById('bgThemeColorPicker');
     if(colorPicker) colorPicker.value = storedColor;
     
-    // Open communication stream window view logs
     document.getElementById('chatBox').innerHTML = `<div class="message-bubble incoming">Protected channel connection initialized on node: ${assignedCharlieNumber}</div>`;
 }
 
@@ -303,7 +312,6 @@ function endActiveCall() {
    VOICE RECORDER, MESSAGING PACKETS & MATRIX RENDERING LOOP (PART 4)
    ========================================================================== */
 
-// --- MICROPHONE CAPTURE & VOICENOTE PROCESSING ---
 async function toggleVoiceRecording() {
     let micButton = document.getElementById('micBtn');
     isRecordingAudio = !isRecordingAudio;
@@ -326,7 +334,6 @@ async function toggleVoiceRecording() {
                 let audioUrl = URL.createObjectURL(audioBlob);
                 appendAudioVoiceMessage(audioUrl, 'outgoing');
                 
-                // Converting raw audio file to dynamic stream format for background node transmission
                 let reader = new FileReader();
                 reader.readAsDataURL(audioBlob);
                 reader.onloadend = function() {
@@ -378,9 +385,6 @@ function appendAudioVoiceMessage(audioUrl, type) {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-/* ==========================================================================
-   CORE END-TO-END TEXT Payloads PROCESSING RULES
-   ========================================================================== */
 function sendMessage() {
     if(!currentActiveUserNode) {
         alert("Verification Required: Please select an active destination node.");
@@ -404,7 +408,7 @@ function sendMessage() {
     socket.emit('send-encrypted-message', {
         senderId: myUserId,
         receiverId: currentActiveUserNode, 
-        encryptedPayload: btoa(rawText), // Convert to base64 structure format securely
+        encryptedPayload: btoa(rawText), 
         isAudioFile: false
     });
     input.value = '';
@@ -419,7 +423,6 @@ function appendMessage(text, type) {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// --- DYNAMIC ASYNC ASYNC PAYLOAD LOG RECEPTION TRACKERS ---
 socket.on('receive-message', (data) => {
     if (data.senderId === currentActiveUserNode || data.receiverId === myUserId) {
         if(data.isAudioFile) {
@@ -435,9 +438,7 @@ socket.on('account-banned', (msg) => {
     document.body.innerHTML = `<div style='color:#ff3333; padding:50px; font-family:monospace;'>[VOLATILE DISCONNECT DISCONNECT TERMINATED: ${msg}]</div>`;
 });
 
-/* ==========================================================================
-   VISUAL MATRIX MATRIX RENDERING MODULES (CANVAS AMBIENT)
-   ========================================================================== */
+// --- CANVAS MATRIX BACKGROUND RENDERING ---
 const canvas = document.getElementById('bubbleCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
