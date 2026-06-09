@@ -1,17 +1,13 @@
-/* ==========================================================================
-   CCS - CHARLIE COMMUNICATION SYSTEM CONFIGURATION & CORE ENGINE
-   ========================================================================== */
-
 // --- ENTERPRISE WEB SECURITY IDENTITY POOL (FIREBASE INITIALIZATION) ---
 const firebaseConfig = {
-    apiKey: "YOUR_REAL_FIREBASE_API_KEY",
-    authDomain: "YOUR_PROJECT_://firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_://appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyB2szPQPPaZ9UyY9AYbTDqemti_No6KO-4",
+    authDomain: "://firebaseapp.com",
+    projectId: "charlie-ccs-auth",
+    storageBucket: "://appspot.com",
+    messagingSenderId: "435702870834",
+    appId: "1:435702870834:web:a6e88a323381f6f3345d2b",
+    measurementId: "G-0J9SMKN61S"
 };
-
 // Initialize Firebase Security Framework securely
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
