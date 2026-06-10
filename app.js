@@ -1,8 +1,8 @@
 /* ==========================================================================
-   CCS - CLIENT ARCHITECTURE CONFIGURATION & STATE POOLS (PART 1)
+   CCS - PRODUCTION ARCHITECTURE: MATRIX CONTROLLERS & DATA POOLS (PART 1)
    ========================================================================== */
 
-// --- ENTERPRISE WEB SECURITY IDENTITY POOL (FIREBASE INITIALIZATION) ---
+// --- ENTERPRISE WEB SECURITY IDENTITY POOL (FIREBASE INTIALIZATION BLOCK) ---
 const firebaseConfig = {
     apiKey: "AIzaSyB2szPQPPaZ9UyY9AYbTDqemti_No6KO-4",
     authDomain: "://firebaseapp.com",
@@ -14,25 +14,37 @@ const firebaseConfig = {
     databaseURL: "https://firebaseio.com" // Real Cloud Database Connected
 };
 
-// Initialize Firebase Core Components Securely
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const database = firebase.database(); // Live Cloud Storage Reference Handle
+// Global variables declared safely using var to prevent temporal scope violations
+var auth;
+var database;
+var myUserId = ""; 
+
+// --- DYNAMIC ENGINE ASYNC SAFE BOOT INITIALIZATION ---
+function initializeFirebaseSystem() {
+    if (typeof firebase !== 'undefined') {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        auth = firebase.auth();
+        database = firebase.database();
+        console.log("✅ [FIREBASE CORE ENGINE]: Connected & Initialized securely inside app runtime environment!");
+        return true;
+    } else {
+        console.warn("⚠️ [ENGINE DELAY]: Firebase elements are still loading via async network channel scripts...");
+        return false;
+    }
+}
 
 // --- GLOBAL NETWORKING DATA MATRIX TRACKERS ---
 const badWords = ["gali1", "gali2"]; 
+const socket = io('https://onrender.com'); // Laptops link guide: Use host laptop IPv4 if required
 
-// Laptops testing local connectivity guide: Put server laptop's internal IPv4 if on same Wi-Fi
-const socket = io('https://onrender.com'); 
-
-// FIXED CORE TRACKER POINTERS
-var myUserId = ""; // Global reference hoisted safely to bypass temporal block errors
 let chatThemesDatabase = {};
 let currentActiveUserNode = null;
 let isRecordingAudio = false;
 let confirmationResultInstance = null; // Cellular OTP handshake tracker
 
-// --- HARDWARE DISCOVERY SUBSYSTEM MEDIA MEDIA STREAMS ---
+// --- HARDWARE DISCOVERY SUBSYSTEM MEDIA STREAMS ---
 let localMediaStream = null;
 let screenShareStream = null;
 let mediaRecorderInstance = null;
@@ -88,16 +100,47 @@ function generateCharlieNumber() {
    AUTHENTICATION LOGIC LAYER & IDENTITY REGISTER DIRECTORY (PART 2)
    ========================================================================== */
 
-// --- ENTERPRISE WEB CAPTCHA ENGINE MOUNT INITIALIZATION ---
-window.onload = function() {
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        'size': 'invisible',
-        'callback': (response) => { console.log("Identity verification cleared."); }
-    });
-};
+// --- ENTERPRISE WEB CAPTCHA ENGINE MOUNT INITIALIZATION & RUNTIME SYNC ---
+window.addEventListener('DOMContentLoaded', () => {
+    // Retry initialization securely if scripts took slightly longer to bind via network hooks
+    let loopTracker = setInterval(() => {
+        if (initializeFirebaseSystem()) {
+            clearInterval(loopTracker);
+            
+            // Mount recaptcha once core SDK engine is available
+            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                'size': 'invisible'
+            });
+
+            // WHATSAPP EMAIL LINK VALIDATOR: Auto-executes when user clicks the incoming verification link in email
+            if (auth.isSignInWithEmailLink(window.location.href)) {
+                let email = window.localStorage.getItem('emailForSignIn');
+                if (!email) {
+                    email = window.prompt('Please enter your email again for absolute verification profile match:');
+                }
+                auth.signInWithEmailLink(email, window.location.href)
+                    .then((result) => {
+                        window.localStorage.removeItem('emailForSignIn');
+                        grantApplicationAccess(generateCharlieNumber());
+                    })
+                    .catch((error) => {
+                        alert("Email verification sequence failure: " + error.message);
+                    });
+            }
+
+            // Persistence handshake restore logic
+            let checkToken = localStorage.getItem('charlie_auth_token');
+            let savedNumber = localStorage.getItem('charlie_assigned_num');
+            if (checkToken === 'true' && savedNumber) {
+                grantApplicationAccess(savedNumber);
+            }
+        }
+    }, 100);
+});
 
 // --- MULTI-CHANNEL ROUTING IDENTIFICATION RULES IMPLEMENTATION ---
 function sendRealSMSOTP() {
+    if(!auth) { alert("Initialization Error: Cloud system core is still sync tracing. Please wait."); return; }
     let phoneInput = document.getElementById('realPhoneInput').value.trim();
     let errorBox = document.getElementById('loginErrorMsg');
     
@@ -131,7 +174,6 @@ function verifyRealOTPCode() {
 
     confirmationResultInstance.confirm(otpCode)
         .then((result) => {
-            // WHATSAPP SECURITY RULE 1: Real cell login sets user original phone number as absolute User ID!
             grantApplicationAccess(result.user.phoneNumber);
         }).catch((error) => {
             errorBox.style.setProperty('display', 'block', 'important');
@@ -139,18 +181,20 @@ function verifyRealOTPCode() {
         });
 }
 
-// --- SECURE INJECTED INTEGRATED PLATFORMS CONTROLLERS ---
+// --- SECURE MULTI-PLATFORM OAUTH DRIVERS ---
 function loginWithGoogleReal() {
+    if(!auth) return;
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider)
-        .then((result) => { grantApplicationAccess(generateCharlieNumber()); }) // Social rules set automatic unique 056-ID
+        .then((result) => { grantApplicationAccess(generateCharlieNumber()); }) 
         .catch((err) => { showLoginError(err.message); });
 }
 
 function loginWithFacebookReal() {
+    if(!auth) return;
     const provider = new firebase.auth.FacebookAuthProvider();
     auth.signInWithPopup(provider)
-        .then((result) => { grantApplicationAccess(generateCharlieNumber()); })
+        .then((result) => { grantApplicationAccess(generateCharlieNumber()); }) 
         .catch((err) => { showLoginError(err.message); });
 }
 
@@ -161,12 +205,28 @@ function loginWithInstagramReal() {
 }
 
 function processRealEmailLogin() {
+    if(!auth) return;
     let emailVal = document.getElementById('realEmailInput').value.trim();
+    let errorBox = document.getElementById('loginErrorMsg');
+
     if (!emailVal.includes('@')) {
         showLoginError("Malformed data validation parameter structure.");
         return;
     }
-    grantApplicationAccess(generateCharlieNumber());
+
+    const actionCodeSettings = {
+        url: window.location.href, 
+        handleCodeInApp: true
+    };
+
+    auth.sendSignInLinkToEmail(emailVal, actionCodeSettings)
+        .then(() => {
+            window.localStorage.setItem('emailForSignIn', emailVal);
+            alert(`Verification Dispatched: We have sent a secure magic confirmation link to ${emailVal}. Please open your email and click it to complete registration!`);
+        })
+        .catch((error) => {
+            showLoginError("Email router exception: " + error.message);
+        });
 }
 
 function processRealGuestLogin() {
@@ -183,27 +243,21 @@ function grantApplicationAccess(identityString) {
     document.getElementById('loginScreen').style.setProperty('display', 'none', 'important');
     document.getElementById('appMainContainer').style.setProperty('display', 'flex', 'important');
     
-    // Mount allocation securely to real-time database matrix
-    let safeCleanKey = identityString.replace(/[.#$\[\]]/g, "_");
-    database.ref('registered_users/' + safeCleanKey).set({
-        userNodeIdentity: identityString,
-        timestamp: Date.now(),
-        status: "online"
-    });
+    if (database) {
+        let safeCleanKey = identityString.replace(/[.#$\[\]]/g, "_");
+        database.ref('registered_users/' + safeCleanKey).set({
+            userNodeIdentity: identityString,
+            timestamp: Date.now(),
+            status: "online"
+        });
+    }
     
     socket.emit('register-user', identityString);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    let checkToken = localStorage.getItem('charlie_auth_token');
-    let savedNumber = localStorage.getItem('charlie_assigned_num');
-    if (checkToken === 'true' && savedNumber) {
-        grantApplicationAccess(savedNumber);
-    }
-});
-
 // --- DYNAMIC SEARCH ENGINES PARALLEL WITH REAL WHATSAPP BEHAVIORS ---
 function addNewContactToList() {
+    if(!database) { alert("Network Syncing: Live link lookup directory is loading records cluster. Retrying..."); return; }
     const inputField = document.getElementById('newContactIdInput');
     let targetId = inputField.value.trim();
 
@@ -218,12 +272,10 @@ function addNewContactToList() {
         return;
     }
 
-    // Direct dynamic lookups to real-time cloud instance rows table
     let safeCleanKey = targetId.replace(/[.#$\[\]]/g, "_");
     database.ref('registered_users/' + safeCleanKey).once('value')
         .then((snapshot) => {
             if (!snapshot.exists()) {
-                // Strict WhatsApp behavior response mechanism
                 alert("Discovery Failure: The profile number or user 056-ID provided is not registered on Charlie system server files.");
                 return;
             }
@@ -232,7 +284,6 @@ function addNewContactToList() {
             const newChatItem = document.createElement('div');
             newChatItem.className = 'chat-item';
             
-            // Side navigation item row selection event trigger
             newChatItem.onclick = function() {
                 switchActiveChat(targetId, targetId);
             };
