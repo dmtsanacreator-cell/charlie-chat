@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CCS - PRODUCTION ARCHITECTURE: MATRIX CONTROLLERS & DATA POOLS (PART 1)
+   CCS - CLIENT ARCHITECTURE CONFIGURATION & STATE POOLS (PART 1)
    ========================================================================== */
 
 // --- ENTERPRISE WEB SECURITY IDENTITY POOL (FIREBASE INITIALIZATION) ---
@@ -25,11 +25,12 @@ const badWords = ["gali1", "gali2"];
 // Laptops testing local connectivity guide: Put server laptop's internal IPv4 if on same Wi-Fi
 const socket = io('https://onrender.com'); 
 
+// FIXED CORE TRACKER POINTERS
+var myUserId = ""; // Global reference hoisted safely to bypass temporal block errors
 let chatThemesDatabase = {};
 let currentActiveUserNode = null;
 let isRecordingAudio = false;
 let confirmationResultInstance = null; // Cellular OTP handshake tracker
-let myUserId = ""; // Current active verified profile session id pointer
 
 // --- HARDWARE DISCOVERY SUBSYSTEM MEDIA MEDIA STREAMS ---
 let localMediaStream = null;
@@ -39,7 +40,6 @@ let recordedAudioChunks = [];
 
 // --- CRITICAL COMPLIANCE FIX: RESPONSIVE OVERLAP TABS DISCOVERY ENGINE ---
 function switchLoginTab(tabId) {
-    // Systems strictly array elements maps tracking targets
     const allTabIds = ["phoneTab", "emailTab", "socialTab", "guestTab"];
     
     // Core engine loop forces absolute blind styling properties on inactive layers
@@ -71,7 +71,7 @@ function switchLoginTab(tabId) {
     // Flush out previous log error structures
     let errBox = document.getElementById('loginErrorMsg');
     if (errBox) {
-        errBox.style.display = 'none';
+        errBox.style.setProperty('display', 'none', 'important');
     }
 }
 
@@ -102,7 +102,7 @@ function sendRealSMSOTP() {
     let errorBox = document.getElementById('loginErrorMsg');
     
     if(!phoneInput.startsWith('+')) {
-        errorBox.style.display = "block";
+        errorBox.style.setProperty('display', 'block', 'important');
         errorBox.innerText = "Error: System requires absolute country code prefix (e.g. +923001234567)";
         return;
     }
@@ -110,11 +110,11 @@ function sendRealSMSOTP() {
     auth.signInWithPhoneNumber(phoneInput, window.recaptchaVerifier)
         .then((confirmationResult) => {
             confirmationResultInstance = confirmationResult;
-            document.getElementById('phoneInputArea').style.display = "none";
+            document.getElementById('phoneInputArea').style.setProperty('display', 'none', 'important');
             document.getElementById('otpInputArea').style.setProperty('display', 'flex', 'important');
-            errorBox.style.display = "none";
+            errorBox.style.setProperty('display', 'none', 'important');
         }).catch((error) => {
-            errorBox.style.display = "block";
+            errorBox.style.setProperty('display', 'block', 'important');
             errorBox.innerText = "Signal Exception: " + error.message;
         });
 }
@@ -124,7 +124,7 @@ function verifyRealOTPCode() {
     let errorBox = document.getElementById('loginErrorMsg');
 
     if(otpCode.length !== 6) {
-        errorBox.style.display = "block";
+        errorBox.style.setProperty('display', 'block', 'important');
         errorBox.innerText = "Validation Exception: Handle token must look like 6 structural digits.";
         return;
     }
@@ -134,7 +134,7 @@ function verifyRealOTPCode() {
             // WHATSAPP SECURITY RULE 1: Real cell login sets user original phone number as absolute User ID!
             grantApplicationAccess(result.user.phoneNumber);
         }).catch((error) => {
-            errorBox.style.display = "block";
+            errorBox.style.setProperty('display', 'block', 'important');
             errorBox.innerText = "Signature Verification Denied: " + error.message;
         });
 }
