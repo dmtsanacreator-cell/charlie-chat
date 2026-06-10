@@ -6,11 +6,11 @@
     <title>CCS - Charlie Communication System</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- SYSTEM CORE SDK LOADER: Sequence Fixed -->
-    <script src="https://gstatic.com"></script>
-    <script src="https://gstatic.com"></script>
-    <script src="https://gstatic.com"></script>
-    <script src="https://socket.io"></script>
+    <!-- SYSTEM CORE SDK LOADER: Defer mode applied for background loading sync -->
+    <script src="https://gstatic.com" defer></script>
+    <script src="https://gstatic.com" defer></script>
+    <script src="https://gstatic.com" defer></script>
+    <script src="https://socket.io" defer></script>
 </head>
 <body>
 
@@ -140,7 +140,7 @@
 
     </div>
 
-    <!-- Script Application Execution Handle -->
-    <script src="app.js"></script>
+    <!-- Script Application Execution Handle: Defer applied to wait for cloud script tags completion -->
+    <script src="app.js" defer></script>
 </body>
 </html>
